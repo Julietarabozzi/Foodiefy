@@ -10,12 +10,7 @@ struct WelcomeView: View {
 
                 VStack(spacing: 20) {
                     Spacer()
-
-                    Image("image") // Asegúrate de que "image" esté en tus Assets
-                        .resizable()
-                        .frame(width: 100, height: 100)
-
-                    // Título de la aplicación
+                    
                     Text("Foodify")
                         .font(.largeTitle)
                         .fontWeight(.bold)
