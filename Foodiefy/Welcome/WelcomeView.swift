@@ -9,40 +9,39 @@ struct WelcomeView: View {
                     .edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 20) {
-                    Spacer()
                     
                     Text("Foodify")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.darkGreenFoodiefy)
+                        .padding(.top, 80)
 
                     // Subtítulo
                     Text("Diseña tu alimentación, alcanza tus metas")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .fontWeight(.bold)
+                        .foregroundColor(.darkGreenFoodiefy)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
 
-                    Spacer()
-                    Image(.image)
+                        Image("image")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 400, height: 400)
+            
                     Spacer()
                     // Botón para iniciar sesión
                     NavigationLink(destination: LoginView()) {
-                        Text("Iniciar sesión")
-                            .frame(maxWidth: .infinity)
+                        Text("Inicia sesión")
                     }
                     .buttonStyle(FoodiefyButtonStyle())
-                    .padding(.horizontal, 40)
 
                     // Botón para crear cuenta
-                    NavigationLink(destination: SignUpView()) {
-                        Text("Crear tu cuenta")
-                            .frame(maxWidth: .infinity)
+                    NavigationLink(destination: RegisterView()) {
+                        Text("Crea tu cuenta")
                     }
                     .buttonStyle(FoodiefyButtonStyle())
-                    .padding(.horizontal, 40)
-
-                    Spacer()
+                    .padding(.bottom, 60)
                 }
             }
         }

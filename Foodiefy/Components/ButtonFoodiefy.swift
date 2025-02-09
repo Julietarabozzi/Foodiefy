@@ -1,7 +1,5 @@
 import SwiftUI
 
-import SwiftUI
-
 struct FoodiefyButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
