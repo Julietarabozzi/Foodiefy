@@ -3,49 +3,47 @@ import SwiftUI
 struct WelcomeView: View {
     var body: some View {
         NavigationStack {
-            ZStack {
-                // Fondo que cubre toda el área
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
-
-                VStack(spacing: 20) {
-                    
+            VStack(spacing: 20) {
+                Spacer()
+                VStack(spacing: 8) {
                     Text("Foodify")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.darkGreenFoodiefy)
-                        .padding(.top, 80)
-
-                    // Subtítulo
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .foregroundColor(Color("darkGreenFoodiefy"))
+                    
                     Text("Diseña tu alimentación, alcanza tus metas")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.darkGreenFoodiefy)
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
-
-                        Image("image")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 400, height: 400)
-            
-                    Spacer()
-                    // Botón para iniciar sesión
+                }
+                
+                // Imagen del logo
+                Image("image")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 250, height: 250)
+                
+                Spacer()
+                
+                // Botones estilizados
+                VStack(spacing: 15) {
                     NavigationLink(destination: LoginView()) {
                         Text("Inicia sesión")
                     }
                     .buttonStyle(FoodiefyButtonStyle())
-
-                    // Botón para crear cuenta
+                    
                     NavigationLink(destination: RegisterView()) {
                         Text("Crea tu cuenta")
                     }
                     .buttonStyle(FoodiefyButtonStyle())
-                    .padding(.bottom, 60)
                 }
+                
+                Spacer()
             }
+            .padding(.vertical, 40)
         }
     }
+    
 }
 
 // Preview

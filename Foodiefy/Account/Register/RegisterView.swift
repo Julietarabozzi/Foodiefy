@@ -2,53 +2,41 @@ import SwiftUI
 
 struct RegisterView: View {
     @StateObject private var viewModel = RegisterViewModel()
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("greyBackground").edgesIgnoringSafeArea(.all)
-
+                
                 VStack(spacing: 20) {
                     Spacer()
-
+                    
                     Text("Crear cuenta")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
-
+                        .foregroundColor(Color("darkGreenFoodiefy"))
+                    
                     Text("Regístrate y comienza a alcanzar tus metas")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
-
+                    
                     Spacer()
                     Image("image")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 200, height: 200)
+                        .frame(width: 250, height: 250)
                     Spacer()
-
-                    TextField("Correo electrónico", text: $viewModel.email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                        .padding(.horizontal, 40)
-
-                    TextField("Contraseña", text: $viewModel.password)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .padding(.horizontal, 40)
-
-                    TextField("Confirmar contraseña", text: $viewModel.confirmPassword)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .padding(.horizontal, 40)
-
+                    
+                    // Campos de texto reutilizables
+                    VStack(spacing: 15) {
+                        FoodiefyTextField(placeholder: "Correo electrónico", text: $viewModel.email)
+                        FoodiefyTextField(placeholder: "Contraseña", text: $viewModel.password, isSecure: true)
+                        FoodiefyTextField(placeholder: "Confirmar contraseña", text: $viewModel.confirmPassword, isSecure: true)
+                            .textContentType(.none)
+                    }
+                    
                     if viewModel.isLoading {
                         ProgressView().padding()
                     } else {
@@ -59,12 +47,14 @@ struct RegisterView: View {
                         }
                         .buttonStyle(FoodiefyButtonStyle())
                     }
-
+                    
                     Spacer()
                 }
                 .navigationDestination(isPresented: $viewModel.registrationSuccess) {
                     OnboardingWelcomeView()
                 }
+                .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+                .navigationBarHidden(true)
             }
         }
     }

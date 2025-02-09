@@ -4,50 +4,54 @@ struct OnboardingWelcomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
                 
-                VStack(spacing: 40) {
+                VStack(spacing: 30) {
                     Spacer()
                     
-                    // Mensaje de bienvenida
+                    // Título
                     Text("¡Bienvenido a Foodiefy!")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                    
+                        .foregroundColor(Color("darkGreenFoodiefy"))
+        
+
+                    // Subtítulo
                     Text("Diseña tu alimentación y alcanza tus metas. Estamos aquí para ayudarte a construir una vida más saludable.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                     
                     Spacer()
-                    Image(.image)
-                    Spacer()
                     
+                    // Imagen central
+                    Image("image")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 250, height: 250)
+                    
+                    Spacer()
+
                     // Botón para comenzar
                     NavigationLink(destination: OnboardingFormView()) {
                         Text("Comenzar")
-                            .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FoodiefyButtonStyle())
                     .padding(.horizontal, 40)
                     
                     Spacer()
                 }
+                .padding(.vertical, 40)
             }
+            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .navigationBarHidden(true)
         }
     }
 }
 
-// Preview para la vista de bienvenida
+// Preview
 struct OnboardingWelcomeView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingWelcomeView()
     }
 }
-

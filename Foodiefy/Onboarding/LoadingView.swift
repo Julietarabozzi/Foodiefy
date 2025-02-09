@@ -45,6 +45,7 @@ struct LoadingView: View {
                 }
                 .navigationBarTitle("", displayMode: .inline)
             }
+            .navigationBarHidden(true)
             .onAppear {
                 // Simula el tiempo de carga y navega automáticamente después de 5 segundos
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5) {

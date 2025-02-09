@@ -21,9 +21,7 @@ struct OnboardingFormView: View {
                     Text("Cuéntanos sobre ti")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
+                        .foregroundColor(Color("darkGreenFoodiefy"))
                     Spacer()
 
                     // Campos del formulario
@@ -85,7 +83,8 @@ struct OnboardingFormView: View {
                     EmptyView()
                 }
             }
-            .navigationBarTitle("", displayMode: .inline)
+            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .navigationBarHidden(true)
         }
     }
 }

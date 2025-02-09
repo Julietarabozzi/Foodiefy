@@ -32,10 +32,7 @@ struct ActivityLevelView: View {
                     Text("¿Cuál es tu nivel de actividad física?")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-
+                        .foregroundColor(Color("darkGreenFoodiefy"))
                     Spacer()
 
                     // Opciones del formulario
@@ -78,7 +75,8 @@ struct ActivityLevelView: View {
                     EmptyView()
                 }
             }
-            .navigationBarTitle("", displayMode: .inline)
+            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .navigationBarHidden(true)
         }
     }
 }

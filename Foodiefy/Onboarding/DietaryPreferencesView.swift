@@ -26,9 +26,7 @@ struct DietaryPreferencesView: View {
                     Text("¿Tienes alguna preferencia o restricción alimenticia?")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
+                        .foregroundColor(Color("darkGreenFoodiefy"))
 
                     Spacer()
 
@@ -84,7 +82,8 @@ struct DietaryPreferencesView: View {
                     EmptyView()
                 }
             }
-            .navigationBarTitle("", displayMode: .inline)
+            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .navigationBarHidden(true)
         }
     }
 }

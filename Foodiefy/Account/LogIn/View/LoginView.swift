@@ -7,36 +7,21 @@ struct LoginView: View {
         NavigationStack {
             ZStack {
                 Color("greyBackground").edgesIgnoringSafeArea(.all)
-                
                 VStack(spacing: 20) {
-                    HStack {
-                        BackButton().padding(.leading)
-                        Spacer()
-                    }
-
+                    Spacer()
                     Text("Bienvenido de nuevo")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(Color("darkGreenFoodiefy"))
-                        .padding(.top, 10)
 
                     Image("image")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 350, height: 350)
+                        .frame(width: 300, height: 300)
                     
                     VStack(spacing: 15) {
-                        TextField("Correo electrónico", text: $viewModel.email)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .padding(.horizontal, 40)
-                        
-                        SecureField("Contraseña", text: $viewModel.password)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .padding(.horizontal, 40)
+                        FoodiefyTextField(placeholder: "Correo electrónico", text: $viewModel.email)
+                        FoodiefyTextField(placeholder: "Contraseña", text: $viewModel.password, isSecure: true)
                     }
 
                     if viewModel.isLoading {
@@ -53,8 +38,9 @@ struct LoginView: View {
                     Spacer()
                 }
             }
+            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
             .navigationDestination(isPresented: $viewModel.loginSuccess) {
-                HomeView() // Navegar a HomeView cuando loginSuccess sea true
+                HomeView()
             }
             .navigationBarHidden(true)
         }
