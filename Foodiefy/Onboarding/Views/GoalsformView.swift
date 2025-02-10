@@ -7,21 +7,21 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct GoalsformView: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var selectedGoal: String = ""
     @State private var navigateToNextView = false
     
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
+                Color("greyBackground").edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 20) {
                     Spacer()
 
-                    // Título de la pantalla
                     Text("¿Cuál es tu objetivo?")
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -29,7 +29,6 @@ struct GoalsformView: View {
                     
                     Spacer()
 
-                    // Opciones del formulario
                     VStack(spacing: 15) {
                         GoalOptionButton(label: "Ganar peso", isSelected: selectedGoal == "Ganar peso") {
                             selectedGoal = "Ganar peso"
@@ -45,10 +44,10 @@ struct GoalsformView: View {
                     
                     Spacer()
 
-                    // Botón para continuar
                     Button(action: {
-                        // Acción para continuar
-                        print("Objetivo seleccionado: \(selectedGoal)")
+                        // Guardar el objetivo seleccionado en el ViewModel
+                        viewModel.goals = selectedGoal
+                        print("Objetivo seleccionado: \(viewModel.goals)")
                         navigateToNextView = true
                     }) {
                         Text("Siguiente")
@@ -56,20 +55,19 @@ struct GoalsformView: View {
                     }
                     .buttonStyle(FoodiefyButtonStyle())
                     .padding(.horizontal, 40)
-                    .disabled(selectedGoal.isEmpty) // Deshabilitar si no se selecciona nada
+                    .disabled(selectedGoal.isEmpty)
                     
                     Spacer()
                 }
                 
-                // NavigationLink oculto para la navegación programática
                 NavigationLink(
-                    destination: DietaryPreferencesView(), // Navega a la vista de restricciones alimenticias
+                    destination: DietaryPreferencesView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
                     isActive: $navigateToNextView
                 ) {
                     EmptyView()
                 }
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)
         }
     }

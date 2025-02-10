@@ -9,41 +9,33 @@ import Foundation
 import SwiftUI
 
 struct ActivityLevelView: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var selectedActivityLevel: String = ""
     @State private var navigateToNextView = false
 
-    let activityLevels = [
-        "Principiante",
-        "Intermedio",
-        "Avanzado"
-    ]
-    
+    let activityLevels = ["Principiante", "Intermedio", "Avanzado"]
+
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
+                Color("greyBackground").edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 20) {
                     Spacer()
 
-                    // Título de la pantalla
                     Text("¿Cuál es tu nivel de actividad física?")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(Color("darkGreenFoodiefy"))
+
                     Spacer()
 
-                    // Opciones del formulario
                     VStack(spacing: 15) {
                         ForEach(activityLevels, id: \.self) { level in
                             ActivityLevelOptionButton(
                                 label: level,
                                 isSelected: selectedActivityLevel == level,
-                                action: {
-                                    selectedActivityLevel = level
-                                }
+                                action: { selectedActivityLevel = level }
                             )
                         }
                     }
@@ -51,10 +43,10 @@ struct ActivityLevelView: View {
 
                     Spacer()
 
-                    // Botón para continuar
                     Button(action: {
-                        // Acción para continuar
-                        print("Nivel de actividad física seleccionado: \(selectedActivityLevel)")
+                        // Guardar el nivel de actividad en el ViewModel
+                        viewModel.activityLevel = selectedActivityLevel
+                        print("Nivel de actividad física seleccionado: \(viewModel.activityLevel)")
                         navigateToNextView = true
                     }) {
                         Text("Siguiente")
@@ -62,20 +54,19 @@ struct ActivityLevelView: View {
                     }
                     .buttonStyle(FoodiefyButtonStyle())
                     .padding(.horizontal, 40)
-                    .disabled(selectedActivityLevel.isEmpty) // Deshabilitar si no se selecciona nada
-                    
+                    .disabled(selectedActivityLevel.isEmpty)
+
                     Spacer()
                 }
 
-                // NavigationLink oculto para la navegación programática
                 NavigationLink(
-                    destination: SummaryView(), // Reemplaza con la próxima vista
+                    destination: SummaryView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
                     isActive: $navigateToNextView
                 ) {
                     EmptyView()
                 }
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)
         }
     }

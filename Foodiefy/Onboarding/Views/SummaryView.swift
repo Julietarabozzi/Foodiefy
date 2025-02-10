@@ -9,28 +9,17 @@ import Foundation
 import SwiftUI
 
 struct SummaryView: View {
-    // Simulamos los datos elegidos para la demo
-    @State private var name: String = "Julieta Rabozzi"
-    @State private var age: String = "25"
-    @State private var weight: String = "55"
-    @State private var height: String = "165"
-    @State private var goal: String = "Mantener peso"
-    @State private var dietaryPreferences: [String] = ["Vegetariano", "Intolerante a la lactosa"]
-    @State private var activityLevel: String = "Intermedio"
-    
+    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var navigateToNextStep = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
+                Color("greyBackground").edgesIgnoringSafeArea(.all)
                 
                 VStack(spacing: 20) {
                     Spacer()
 
-                    // Título de la pantalla
                     Text("Resumen de tus elecciones")
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -38,25 +27,29 @@ struct SummaryView: View {
 
                     Spacer()
 
-                    // Mostrar los datos
                     VStack(alignment: .leading, spacing: 15) {
-                        SummaryItemView(label: "Nombre", value: name)
-                        SummaryItemView(label: "Edad", value: age)
-                        SummaryItemView(label: "Peso (kg)", value: weight)
-                        SummaryItemView(label: "Altura (cm)", value: height)
-                        SummaryItemView(label: "Objetivo", value: goal)
-                        SummaryItemView(label: "Restricciones alimenticias", value: dietaryPreferences.joined(separator: ", "))
-                        SummaryItemView(label: "Nivel de actividad física", value: activityLevel)
+                        SummaryItemView(label: "Nombre", value: viewModel.name)
+                        SummaryItemView(label: "Edad", value: viewModel.age)
+                        SummaryItemView(label: "Peso (kg)", value: viewModel.weight)
+                        SummaryItemView(label: "Altura (cm)", value: viewModel.height)
+                        SummaryItemView(label: "Objetivo", value: viewModel.goals)
+                        SummaryItemView(label: "Restricciones alimenticias", value: viewModel.dietaryPreferences.joined(separator: ", "))
+                        SummaryItemView(label: "Nivel de actividad física", value: viewModel.activityLevel)
                     }
                     .padding(.horizontal, 40)
                     
                     Spacer()
 
-                    // Botón para confirmar o avanzar
                     Button(action: {
-                        // Acción para confirmar o continuar
-                        print("Datos confirmados: Nombre: \(name), Edad: \(age), etc.")
-                        navigateToNextStep = true
+                        // Enviar datos al backend
+                        viewModel.sendDataToBackend { success in
+                            if success {
+                                print("✅ Datos enviados al backend.")
+                                navigateToNextStep = true
+                            } else {
+                                print("❌ Error al enviar los datos.")
+                            }
+                        }
                     }) {
                         Text("Confirmar y continuar")
                             .frame(maxWidth: .infinity)
@@ -67,7 +60,6 @@ struct SummaryView: View {
                     Spacer()
                 }
 
-                // NavigationLink oculto para el siguiente paso
                 NavigationLink(
                     destination: LoadingView(), // Cambia a la vista que sigue después del resumen
                     isActive: $navigateToNextStep
@@ -75,7 +67,7 @@ struct SummaryView: View {
                     EmptyView()
                 }
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)
         }
     }
@@ -85,7 +77,7 @@ struct SummaryView: View {
 struct SummaryItemView: View {
     let label: String
     let value: String
-
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text(label)
@@ -98,3 +90,4 @@ struct SummaryItemView: View {
         .padding(.vertical, 5)
     }
 }
+

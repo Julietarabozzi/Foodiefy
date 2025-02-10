@@ -1,6 +1,9 @@
 import SwiftUI
 
+import SwiftUI
+
 struct DietaryPreferencesView: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var selectedPreferences: [String] = []
     @State private var navigateToNextView = false
 
@@ -15,14 +18,11 @@ struct DietaryPreferencesView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
+                Color("greyBackground").edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 20) {
                     Spacer()
 
-                    // Título de la pantalla
                     Text("¿Tienes alguna preferencia o restricción alimenticia?")
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -30,7 +30,6 @@ struct DietaryPreferencesView: View {
 
                     Spacer()
 
-                    // Opciones del formulario
                     VStack(spacing: 15) {
                         ForEach(preferences, id: \.self) { preference in
                             DietaryOptionButton(
@@ -38,12 +37,9 @@ struct DietaryPreferencesView: View {
                                 isSelected: selectedPreferences.contains(preference),
                                 action: {
                                     if preference == "No tengo" {
-                                        // Si selecciona "No tengo", deselecciona todas las demás
-                                        selectedPreferences = ["No tengo"]
+                                        selectedPreferences = ["No tengo"] // Si selecciona "No tengo", deselecciona todas las demás
                                     } else {
-                                        // Desmarcar "No tengo" si selecciona otra
                                         selectedPreferences.removeAll { $0 == "No tengo" }
-                                        // Alternar selección
                                         if selectedPreferences.contains(preference) {
                                             selectedPreferences.removeAll { $0 == preference }
                                         } else {
@@ -58,10 +54,10 @@ struct DietaryPreferencesView: View {
 
                     Spacer()
 
-                    // Botón para continuar
                     Button(action: {
-                        // Acción para continuar
-                        print("Preferencias seleccionadas: \(selectedPreferences)")
+                        // Guardar las preferencias seleccionadas en el ViewModel
+                        viewModel.dietaryPreferences = selectedPreferences
+                        print("Preferencias seleccionadas: \(viewModel.dietaryPreferences)")
                         navigateToNextView = true
                     }) {
                         Text("Siguiente")
@@ -69,20 +65,19 @@ struct DietaryPreferencesView: View {
                     }
                     .buttonStyle(FoodiefyButtonStyle())
                     .padding(.horizontal, 40)
-                    .disabled(selectedPreferences.isEmpty) // Deshabilitar si no selecciona nada
+                    .disabled(selectedPreferences.isEmpty)
                     
                     Spacer()
                 }
 
-                // NavigationLink oculto para la navegación programática
                 NavigationLink(
-                    destination: ActivityLevelView(), // Reemplaza con la próxima vista
+                    destination: ActivityLevelView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
                     isActive: $navigateToNextView
                 ) {
                     EmptyView()
                 }
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
+            .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)
         }
     }
