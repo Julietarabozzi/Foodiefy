@@ -1,22 +1,15 @@
-//
-//  SummaryView.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 21/11/2024.
-//
-
-import Foundation
 import SwiftUI
 
 struct SummaryView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
-    @State private var navigateToNextStep = false
+    @EnvironmentObject var viewModel: OnboardingViewModel
+    @State private var navigateToLoading = false
+    @State private var navigateToHome = false
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("greyBackground").edgesIgnoringSafeArea(.all)
-                
+
                 VStack(spacing: 20) {
                     Spacer()
 
@@ -37,35 +30,32 @@ struct SummaryView: View {
                         SummaryItemView(label: "Nivel de actividad física", value: viewModel.activityLevel)
                     }
                     .padding(.horizontal, 40)
-                    
+
                     Spacer()
 
                     Button(action: {
-                        // Enviar datos al backend
                         viewModel.sendDataToBackend { success in
                             if success {
                                 print("✅ Datos enviados al backend.")
-                                navigateToNextStep = true
+                                navigateToLoading = true
                             } else {
                                 print("❌ Error al enviar los datos.")
                             }
                         }
                     }) {
-                        Text("Confirmar y continuar")
-                            .frame(maxWidth: .infinity)
+                        if viewModel.isSubmitting {
+                            ProgressView()
+                        } else {
+                            Text("Confirmar y continuar")
+                                .frame(maxWidth: .infinity)
+                        }
                     }
                     .buttonStyle(FoodiefyButtonStyle())
                     .padding(.horizontal, 40)
-                    
-                    Spacer()
                 }
 
-                NavigationLink(
-                    destination: LoadingView(), // Cambia a la vista que sigue después del resumen
-                    isActive: $navigateToNextStep
-                ) {
-                    EmptyView()
-                }
+                NavigationLink(destination: LoadingView(navigateToHome: $navigateToHome), isActive: $navigateToLoading) { EmptyView() }
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) { EmptyView() }
             }
             .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)

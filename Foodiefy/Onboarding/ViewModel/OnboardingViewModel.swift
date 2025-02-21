@@ -16,15 +16,11 @@ class OnboardingViewModel: ObservableObject {
     @Published var activityLevel: String = ""
     @Published var dietaryPreferences: [String] = []
     @Published var goals: String = ""
+    @Published var mealPlan: String = "" // 🔹 Aquí guardamos el plan generado
+    @Published var isSubmitting = false
 
     func sendDataToBackend(completion: @escaping (Bool) -> Void) {
-        guard let url = URL(string: "http://localhost:5001/api/onboarding") else { return }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: Any] = [
+        let userData: [String: Any] = [
             "name": name,
             "age": age,
             "weight": weight,
@@ -34,26 +30,15 @@ class OnboardingViewModel: ObservableObject {
             "activityLevel": activityLevel
         ]
 
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        isSubmitting = true
+        OnboardingService.shared.sendUserData(userData) { success, receivedMealPlan in
             DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Error al enviar los datos: \(error.localizedDescription)")
-                    completion(false)
-                    return
+                self.isSubmitting = false
+                if success {
+                    self.mealPlan = receivedMealPlan ?? "No se pudo generar un plan."
                 }
-
-                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    print("❌ Respuesta inválida del servidor.")
-                    completion(false)
-                    return
-                }
-
-                print("✅ Datos enviados con éxito.")
-                completion(true)
+                completion(success)
             }
-        }.resume()
+        }
     }
-
 }
