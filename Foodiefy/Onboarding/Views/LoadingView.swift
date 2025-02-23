@@ -28,10 +28,9 @@ struct LoadingView: View {
             Spacer()
         }
         .navigationBarHidden(true)
-        .onAppear {
-            if !viewModel.mealPlan.isEmpty {
+        .onReceive(viewModel.$weeklyPlans) { newPlans in
+            if !newPlans.isEmpty {
                 navigateToHome = true
-                
             }
         }
     }

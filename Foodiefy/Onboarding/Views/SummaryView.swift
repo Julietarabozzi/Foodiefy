@@ -55,7 +55,7 @@ struct SummaryView: View {
                 }
 
                 NavigationLink(destination: LoadingView(navigateToHome: $navigateToHome), isActive: $navigateToLoading) { EmptyView() }
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) { EmptyView() }
+                NavigationLink(destination: TabBarView(), isActive: $navigateToHome) { EmptyView() }
             }
             .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)

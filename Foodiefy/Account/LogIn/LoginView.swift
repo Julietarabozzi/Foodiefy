@@ -40,7 +40,7 @@ struct LoginView: View {
             }
             .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
             .navigationDestination(isPresented: $viewModel.loginSuccess) {
-                HomeView()
+                TabBarView()
             }
             .navigationBarHidden(true)
         }

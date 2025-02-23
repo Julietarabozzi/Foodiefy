@@ -6,8 +6,8 @@
 //
 import Foundation
 
-class OnboardingService {
-    static let shared = OnboardingService()
+class MealPlanService {
+    static let shared = MealPlanService()
     private let baseURL = "https://foodiefy-backend-production.up.railway.app/api/meal-plan"
 
     func generateMealPlan(_ userData: [String: Any], completion: @escaping (Bool, String?) -> Void) {
