@@ -1,11 +1,3 @@
-//
-//  OnboardingViewModel.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 09/02/2025.
-//
-
-import Foundation
 import Foundation
 
 class OnboardingViewModel: ObservableObject {
@@ -17,7 +9,7 @@ class OnboardingViewModel: ObservableObject {
     @Published var dietaryPreferences: [String] = []
     @Published var goals: String = ""
     @Published var mealPlan: String = "" // 🔹 Aquí guardamos el plan generado
-    @Published var isSubmitting = false
+    @Published var isSubmitting = false // 🔹 Para mostrar un indicador de carga
 
     func sendDataToBackend(completion: @escaping (Bool) -> Void) {
         let userData: [String: Any] = [
@@ -29,15 +21,20 @@ class OnboardingViewModel: ObservableObject {
             "dietaryPreferences": dietaryPreferences,
             "activityLevel": activityLevel
         ]
+        
+        isSubmitting = true // 🔹 Comienza la carga
 
-        isSubmitting = true
-        OnboardingService.shared.sendUserData(userData) { success, receivedMealPlan in
+        OnboardingService.shared.generateMealPlan(userData) { success, mealPlan in
             DispatchQueue.main.async {
-                self.isSubmitting = false
+                self.isSubmitting = false // 🔹 Finaliza la carga
                 if success {
-                    self.mealPlan = receivedMealPlan ?? "No se pudo generar un plan."
+                    self.mealPlan = mealPlan ?? "No recibido"
+                    print("✅ Plan generado:\n\(self.mealPlan)")
+                    completion(true)
+                } else {
+                    print("❌ Error al generar el plan: \(mealPlan ?? "Desconocido")")
+                    completion(false)
                 }
-                completion(success)
             }
         }
     }

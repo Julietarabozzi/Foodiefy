@@ -1,16 +1,10 @@
-//
-//  Service.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 08/02/2025.
-//
 import Foundation
 
 struct APIService {
     static let shared = APIService()  // Singleton para usar el servicio en cualquier parte
     
-    private let baseURL = "http://localhost:5001/api/auth"  // Base URL para todas las peticiones
-    
+    private let baseURL = "https://foodiefy-backend-production.up.railway.app/api/auth"  // Base URL correcta
+
     // Servicio para registrar un usuario
     func registerUser(name: String, email: String, password: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let url = URL(string: "\(baseURL)/register") else {
