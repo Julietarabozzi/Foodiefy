@@ -11,22 +11,38 @@ import SwiftUI
 struct FoodiefyTextField: View {
     var placeholder: String
     @Binding var text: String
-    var isSecure: Bool = false
 
     var body: some View {
-        Group {
+        TextField(placeholder, text: $text)
+            .textFieldStyle()
+            .padding(.horizontal, 40)
+    }
+}
+
+// 🔹 TextField específico para contraseñas con icono de ojo
+struct FoodiefyPasswordField: View {
+    var placeholder: String
+    @Binding var text: String
+    @State private var isSecure: Bool = true
+
+    var body: some View {
+        HStack {
             if isSecure {
                 SecureField(placeholder, text: $text)
-                    .textFieldStyle()
             } else {
                 TextField(placeholder, text: $text)
-                    .textFieldStyle()
+            }
+            Button(action: { isSecure.toggle() }) {
+                Image(systemName: isSecure ? "eye.slash.fill" : "eye.fill")
+                    .foregroundColor(.gray)
             }
         }
+        .textFieldStyle()
         .padding(.horizontal, 40)
     }
 }
 
+// 🔹 Extensión para aplicar un estilo unificado
 extension View {
     func textFieldStyle() -> some View {
         self

@@ -21,7 +21,7 @@ struct LoginView: View {
                     
                     VStack(spacing: 15) {
                         FoodiefyTextField(placeholder: "Correo electrónico", text: $viewModel.email)
-                        FoodiefyTextField(placeholder: "Contraseña", text: $viewModel.password, isSecure: true)
+                        FoodiefyPasswordField(placeholder: "Contraseña", text: $viewModel.password)
                     }
 
                     if viewModel.isLoading {

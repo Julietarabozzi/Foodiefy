@@ -38,5 +38,6 @@ struct TabBarView: View {
                 }
         }
         .accentColor(.purple)
+        .navigationBarBackButtonHidden(true)
     }
 }

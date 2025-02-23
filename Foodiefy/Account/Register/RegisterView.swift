@@ -32,8 +32,8 @@ struct RegisterView: View {
                     // Campos de texto reutilizables
                     VStack(spacing: 15) {
                         FoodiefyTextField(placeholder: "Correo electrónico", text: $viewModel.email)
-                        FoodiefyTextField(placeholder: "Contraseña", text: $viewModel.password, isSecure: true)
-                        FoodiefyTextField(placeholder: "Confirmar contraseña", text: $viewModel.confirmPassword, isSecure: true)
+                        FoodiefyPasswordField(placeholder: "Contraseña", text: $viewModel.password)
+                        FoodiefyPasswordField(placeholder: "Confirmar contraseña", text: $viewModel.confirmPassword)
                             .textContentType(.none)
                     }
                     
