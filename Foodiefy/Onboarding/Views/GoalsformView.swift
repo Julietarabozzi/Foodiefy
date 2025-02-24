@@ -1,21 +1,11 @@
-//
-//  NextOnboardingView.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 19/11/2024.
-//
-
-import SwiftUI
-
 import SwiftUI
 
 struct GoalsformView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var selectedGoal: String = ""
-    @State private var navigateToNextView = false
+    @EnvironmentObject var router: AppRouter // Agregamos el router
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color("greyBackground").edgesIgnoringSafeArea(.all)
 
@@ -48,7 +38,7 @@ struct GoalsformView: View {
                         // Guardar el objetivo seleccionado en el ViewModel
                         viewModel.goals = selectedGoal
                         print("Objetivo seleccionado: \(viewModel.goals)")
-                        navigateToNextView = true
+                        router.navigate(to: .dietaryPreferences) // ✅ Navegar a la siguiente vista con el router
                     }) {
                         Text("Siguiente")
                             .frame(maxWidth: .infinity)
@@ -59,18 +49,10 @@ struct GoalsformView: View {
                     
                     Spacer()
                 }
-                
-                NavigationLink(
-                    destination: DietaryPreferencesView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
-                    isActive: $navigateToNextView
-                ) {
-                    EmptyView()
-                }
             }
             .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)
         }
-    }
 }
 
 // Componente reutilizable para las opciones del objetivo

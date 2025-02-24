@@ -6,10 +6,9 @@ struct OnboardingFormView: View {
     @State private var age: String = ""
     @State private var weight: String = ""
     @State private var height: String = ""
-    @State private var navigateToNextView = false
+    @EnvironmentObject var router: AppRouter // Agregamos el router
 
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color("greyBackground").edgesIgnoringSafeArea(.all)
 
@@ -46,7 +45,7 @@ struct OnboardingFormView: View {
                         print("Información del usuario guardada en el ViewModel:")
                         print("Nombre: \(viewModel.name), Edad: \(viewModel.age), Peso: \(viewModel.weight), Altura: \(viewModel.height)")
 
-                        navigateToNextView = true
+                        router.navigate(to: .goalsForm) // ✅ Navegar a la siguiente vista con el router
                     }) {
                         Text("Siguiente")
                             .frame(maxWidth: .infinity)
@@ -56,16 +55,9 @@ struct OnboardingFormView: View {
 
                     Spacer()
                 }
-
-                NavigationLink(
-                    destination: GoalsformView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
-                    isActive: $navigateToNextView
-                ) {
-                    EmptyView()
-                }
             }
             .modifier(NavigationBackModifier(color: Color("darkViolet")))
             .navigationBarHidden(true)
         }
-    }
 }
+

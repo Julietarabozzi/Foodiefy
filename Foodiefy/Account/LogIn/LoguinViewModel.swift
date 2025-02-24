@@ -14,9 +14,10 @@ class LoginViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var loginSuccess: Bool = false
     
-    func login() {
+    func login(completion: @escaping (Bool) -> Void) {
         guard !email.isEmpty, !password.isEmpty else {
             print("❌ Los campos están vacíos.")
+            completion(false) // Llamamos al callback con `false`
             return
         }
         
@@ -28,8 +29,10 @@ class LoginViewModel: ObservableObject {
                 case .success(let message):
                     print("✅ Login Success: \(message)")
                     self?.loginSuccess = true
+                    completion(true) // Llamamos al callback con `true`
                 case .failure(let error):
                     print("❌ Error en el login: \(error.localizedDescription)")
+                    completion(false) // Llamamos al callback con `false`
                 }
             }
         }

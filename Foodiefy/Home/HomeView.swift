@@ -4,7 +4,6 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
 
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color("greyBackground")
                     .edgesIgnoringSafeArea(.all)
@@ -51,4 +50,3 @@ struct HomeView: View {
             }
         }
     }
-}

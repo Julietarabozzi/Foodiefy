@@ -2,64 +2,58 @@ import SwiftUI
 
 struct SummaryView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-    @State private var navigateToLoading = false
-    @State private var navigateToHome = false
+    @EnvironmentObject var router: AppRouter // Agregamos el router
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color("greyBackground").edgesIgnoringSafeArea(.all)
+        ZStack {
+            Color("greyBackground").edgesIgnoringSafeArea(.all)
 
-                VStack(spacing: 20) {
-                    Spacer()
+            VStack(spacing: 20) {
+                Spacer()
 
-                    Text("Resumen de tus elecciones")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("darkGreenFoodiefy"))
+                Text("Resumen de tus elecciones")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color("darkGreenFoodiefy"))
 
-                    Spacer()
+                Spacer()
 
-                    VStack(alignment: .leading, spacing: 15) {
-                        SummaryItemView(label: "Nombre", value: viewModel.name)
-                        SummaryItemView(label: "Edad", value: viewModel.age)
-                        SummaryItemView(label: "Peso (kg)", value: viewModel.weight)
-                        SummaryItemView(label: "Altura (cm)", value: viewModel.height)
-                        SummaryItemView(label: "Objetivo", value: viewModel.goals)
-                        SummaryItemView(label: "Restricciones alimenticias", value: viewModel.dietaryPreferences.joined(separator: ", "))
-                        SummaryItemView(label: "Nivel de actividad física", value: viewModel.activityLevel)
-                    }
-                    .padding(.horizontal, 40)
-
-                    Spacer()
-
-                    Button(action: {
-                        viewModel.sendDataToBackend { success in
-                            if success {
-                                print("✅ Datos enviados al backend.")
-                                navigateToLoading = true
-                            } else {
-                                print("❌ Error al enviar los datos.")
-                            }
-                        }
-                    }) {
-                        if viewModel.isSubmitting {
-                            ProgressView()
-                        } else {
-                            Text("Confirmar y continuar")
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
-                    .buttonStyle(FoodiefyButtonStyle())
-                    .padding(.horizontal, 40)
+                VStack(alignment: .leading, spacing: 15) {
+                    SummaryItemView(label: "Nombre", value: viewModel.name)
+                    SummaryItemView(label: "Edad", value: viewModel.age)
+                    SummaryItemView(label: "Peso (kg)", value: viewModel.weight)
+                    SummaryItemView(label: "Altura (cm)", value: viewModel.height)
+                    SummaryItemView(label: "Objetivo", value: viewModel.goals)
+                    SummaryItemView(label: "Restricciones alimenticias", value: viewModel.dietaryPreferences.joined(separator: ", "))
+                    SummaryItemView(label: "Nivel de actividad física", value: viewModel.activityLevel)
                 }
+                .padding(.horizontal, 40)
 
-                NavigationLink(destination: LoadingView(navigateToHome: $navigateToHome), isActive: $navigateToLoading) { EmptyView() }
-                NavigationLink(destination: TabBarView(), isActive: $navigateToHome) { EmptyView() }
+                Spacer()
+
+                Button(action: {
+                    viewModel.sendDataToBackend { success in
+                        if success {
+                            print("✅ Datos enviados al backend.")
+                            router.navigate(to: .loading) // ✅ Navegar a la pantalla de carga
+                        } else {
+                            print("❌ Error al enviar los datos.")
+                        }
+                    }
+                }) {
+                    if viewModel.isSubmitting {
+                        ProgressView()
+                    } else {
+                        Text("Confirmar y continuar")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .buttonStyle(FoodiefyButtonStyle())
+                .padding(.horizontal, 40)
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet")))
-            .navigationBarHidden(true)
         }
+        .modifier(NavigationBackModifier(color: Color("darkViolet")))
+        .navigationBarHidden(true)
     }
 }
 

@@ -2,7 +2,8 @@ import SwiftUI
 
 struct LoadingView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-    @Binding var navigateToHome: Bool
+    @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var sessionManager: UserSessionManager
 
     var body: some View {
         VStack(spacing: 30) {
@@ -30,7 +31,8 @@ struct LoadingView: View {
         .navigationBarHidden(true)
         .onReceive(viewModel.$weeklyPlans) { newPlans in
             if !newPlans.isEmpty {
-                navigateToHome = true
+                sessionManager.login()
+                router.navigate(to: .home) // ✅ Cambiamos la navegación
             }
         }
     }

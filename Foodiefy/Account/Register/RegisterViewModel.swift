@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 09/02/2025.
-//
-
 import Foundation
 import SwiftUI
 
@@ -15,9 +8,10 @@ class RegisterViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var registrationSuccess: Bool = false
     
-    func register() {
+    func register(completion: @escaping (Bool) -> Void) {
         guard password == confirmPassword else {
             print("❌ Las contraseñas no coinciden")
+            completion(false) // Llamamos al callback con `false`
             return
         }
         
@@ -29,8 +23,10 @@ class RegisterViewModel: ObservableObject {
                 case .success(let message):
                     print("✅ Registro exitoso: \(message)")
                     self?.registrationSuccess = true
+                    completion(true)
                 case .failure(let error):
                     print("❌ Error en el registro: \(error.localizedDescription)")
+                    completion(false) 
                 }
             }
         }

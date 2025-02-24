@@ -1,11 +1,9 @@
 import SwiftUI
 
-import SwiftUI
-
 struct DietaryPreferencesView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var selectedPreferences: [String] = []
-    @State private var navigateToNextView = false
+    @EnvironmentObject var router: AppRouter // Agregamos el router
 
     let preferences = [
         "Celíaco",
@@ -16,70 +14,61 @@ struct DietaryPreferencesView: View {
     ]
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color("greyBackground").edgesIgnoringSafeArea(.all)
+        ZStack {
+            Color("greyBackground").edgesIgnoringSafeArea(.all)
 
-                VStack(spacing: 20) {
-                    Spacer()
+            VStack(spacing: 20) {
+                Spacer()
 
-                    Text("¿Tienes alguna preferencia o restricción alimenticia?")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("darkGreenFoodiefy"))
+                Text("¿Tienes alguna preferencia o restricción alimenticia?")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color("darkGreenFoodiefy"))
 
-                    Spacer()
+                Spacer()
 
-                    VStack(spacing: 15) {
-                        ForEach(preferences, id: \.self) { preference in
-                            DietaryOptionButton(
-                                label: preference,
-                                isSelected: selectedPreferences.contains(preference),
-                                action: {
-                                    if preference == "No tengo" {
-                                        selectedPreferences = ["No tengo"] // Si selecciona "No tengo", deselecciona todas las demás
+                VStack(spacing: 15) {
+                    ForEach(preferences, id: \ .self) { preference in
+                        DietaryOptionButton(
+                            label: preference,
+                            isSelected: selectedPreferences.contains(preference),
+                            action: {
+                                if preference == "No tengo" {
+                                    selectedPreferences = ["No tengo"] // Si selecciona "No tengo", deselecciona todas las demás
+                                } else {
+                                    selectedPreferences.removeAll { $0 == "No tengo" }
+                                    if selectedPreferences.contains(preference) {
+                                        selectedPreferences.removeAll { $0 == preference }
                                     } else {
-                                        selectedPreferences.removeAll { $0 == "No tengo" }
-                                        if selectedPreferences.contains(preference) {
-                                            selectedPreferences.removeAll { $0 == preference }
-                                        } else {
-                                            selectedPreferences.append(preference)
-                                        }
+                                        selectedPreferences.append(preference)
                                     }
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
-                    .padding(.horizontal, 40)
-
-                    Spacer()
-
-                    Button(action: {
-                        // Guardar las preferencias seleccionadas en el ViewModel
-                        viewModel.dietaryPreferences = selectedPreferences
-                        print("Preferencias seleccionadas: \(viewModel.dietaryPreferences)")
-                        navigateToNextView = true
-                    }) {
-                        Text("Siguiente")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(FoodiefyButtonStyle())
-                    .padding(.horizontal, 40)
-                    .disabled(selectedPreferences.isEmpty)
-                    
-                    Spacer()
                 }
+                .padding(.horizontal, 40)
 
-                NavigationLink(
-                    destination: ActivityLevelView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
-                    isActive: $navigateToNextView
-                ) {
-                    EmptyView()
+                Spacer()
+
+                Button(action: {
+                    // Guardar las preferencias seleccionadas en el ViewModel
+                    viewModel.dietaryPreferences = selectedPreferences
+                    print("Preferencias seleccionadas: \(viewModel.dietaryPreferences)")
+                    router.navigate(to: .activityLevel) // ✅ Navegar a la siguiente vista con el router
+                }) {
+                    Text("Siguiente")
+                        .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(FoodiefyButtonStyle())
+                .padding(.horizontal, 40)
+                .disabled(selectedPreferences.isEmpty)
+                
+                Spacer()
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet")))
-            .navigationBarHidden(true)
         }
+        .modifier(NavigationBackModifier(color: Color("darkViolet")))
+        .navigationBarHidden(true)
     }
 }
 
@@ -103,4 +92,3 @@ struct DietaryOptionButton: View {
         }
     }
 }
-

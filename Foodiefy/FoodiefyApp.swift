@@ -9,10 +9,15 @@ import SwiftUI
 
 @main
 struct FoodiefyApp: App {
+    @StateObject private var sessionManager = UserSessionManager()
+    @StateObject private var router = AppRouter()
     @StateObject private var onboardingViewModel = OnboardingViewModel()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environmentObject(sessionManager)
+                .environmentObject(router)
                 .environmentObject(onboardingViewModel)
         }
     }

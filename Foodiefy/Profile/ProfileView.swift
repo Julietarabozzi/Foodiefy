@@ -1,12 +1,9 @@
-//
-//  ProfileView.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 23/11/2024.
-//
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var sessionManager: UserSessionManager
+    @EnvironmentObject var router: AppRouter
+    
     // Datos del perfil
     @State private var name: String = "Julieta Rabozzi"
     @State private var age: String = "25"
@@ -17,7 +14,6 @@ struct ProfileView: View {
     @State private var activityLevel: String = "Intermedio"
 
     var body: some View {
-        NavigationStack {
             ZStack {
                 // Fondo
                 Color("greyBackground")
@@ -26,13 +22,12 @@ struct ProfileView: View {
                 ScrollView {
                     VStack(alignment:.leading, spacing: 20) {
                         // Encabezado
-                            Text("Mi Perfil")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary)
-                                .padding()
-      
-                        
+                        Text("Mi Perfil")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                            .padding()
+
                         // Visualización de los datos
                         VStack(spacing: 15) {
                             HStack {
@@ -68,13 +63,25 @@ struct ProfileView: View {
                         }
                         .padding(.horizontal, 40)
                         
+                        // Botón de Logout
+                        Button(action: {
+                            sessionManager.logout()
+                        }) {
+                            Text("Cerrar sesión")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        }
+                        .padding(.horizontal, 40)
+                        
                         Spacer()
                     }
                 }
             }
             .navigationBarTitle("", displayMode: .inline)
         }
-    }
 }
 
 // Componente reutilizable para los ítems del perfil

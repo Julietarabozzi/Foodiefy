@@ -1,74 +1,58 @@
-//
-//  File.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 21/11/2024.
-//
-
 import Foundation
 import SwiftUI
 
 struct ActivityLevelView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
     @State private var selectedActivityLevel: String = ""
-    @State private var navigateToNextView = false
+    @EnvironmentObject var router: AppRouter // Agregamos el router
 
     let activityLevels = ["Principiante", "Intermedio", "Avanzado"]
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color("greyBackground").edgesIgnoringSafeArea(.all)
+        ZStack {
+            Color("greyBackground").edgesIgnoringSafeArea(.all)
 
-                VStack(spacing: 20) {
-                    Spacer()
+            VStack(spacing: 20) {
+                Spacer()
 
-                    Text("¿Cuál es tu nivel de actividad física?")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("darkGreenFoodiefy"))
+                Text("¿Cuál es tu nivel de actividad física?")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color("darkGreenFoodiefy"))
 
-                    Spacer()
+                Spacer()
 
-                    VStack(spacing: 15) {
-                        ForEach(activityLevels, id: \.self) { level in
-                            ActivityLevelOptionButton(
-                                label: level,
-                                isSelected: selectedActivityLevel == level,
-                                action: { selectedActivityLevel = level }
-                            )
-                        }
+                VStack(spacing: 15) {
+                    ForEach(activityLevels, id: \ .self) { level in
+                        ActivityLevelOptionButton(
+                            label: level,
+                            isSelected: selectedActivityLevel == level,
+                            action: { selectedActivityLevel = level }
+                        )
                     }
-                    .padding(.horizontal, 40)
-
-                    Spacer()
-
-                    Button(action: {
-                        // Guardar el nivel de actividad en el ViewModel
-                        viewModel.activityLevel = selectedActivityLevel
-                        print("Nivel de actividad física seleccionado: \(viewModel.activityLevel)")
-                        navigateToNextView = true
-                    }) {
-                        Text("Siguiente")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(FoodiefyButtonStyle())
-                    .padding(.horizontal, 40)
-                    .disabled(selectedActivityLevel.isEmpty)
-
-                    Spacer()
                 }
+                .padding(.horizontal, 40)
 
-                NavigationLink(
-                    destination: SummaryView().environmentObject(viewModel), // Pasar el ViewModel a la próxima vista
-                    isActive: $navigateToNextView
-                ) {
-                    EmptyView()
+                Spacer()
+
+                Button(action: {
+                    // Guardar el nivel de actividad en el ViewModel
+                    viewModel.activityLevel = selectedActivityLevel
+                    print("Nivel de actividad física seleccionado: \(viewModel.activityLevel)")
+                    router.navigate(to: .summary) // ✅ Navegar a la siguiente vista con el router
+                }) {
+                    Text("Siguiente")
+                        .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(FoodiefyButtonStyle())
+                .padding(.horizontal, 40)
+                .disabled(selectedActivityLevel.isEmpty)
+
+                Spacer()
             }
-            .modifier(NavigationBackModifier(color: Color("darkViolet")))
-            .navigationBarHidden(true)
         }
+        .modifier(NavigationBackModifier(color: Color("darkViolet")))
+        .navigationBarHidden(true)
     }
 }
 

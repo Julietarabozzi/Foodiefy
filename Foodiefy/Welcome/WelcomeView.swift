@@ -1,46 +1,43 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    @EnvironmentObject var router: AppRouter
+
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Spacer()
-                VStack(spacing: 8) {
-                    Text("Foodify")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundColor(Color("darkGreenFoodiefy"))
-                    
-                    Text("Diseña tu alimentación, alcanza tus metas")
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                }
+        VStack(spacing: 20) {
+            Spacer()
+            VStack(spacing: 8) {
+                Text("Foodify")
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .foregroundColor(Color("darkGreenFoodiefy"))
                 
-                // Imagen del logo
-                Image("image")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 250, height: 250)
-                
-                Spacer()
-                
-                // Botones estilizados
-                VStack(spacing: 15) {
-                    NavigationLink(destination: LoginView()) {
-                        Text("Inicia sesión")
-                    }
-                    .buttonStyle(FoodiefyButtonStyle())
-                    
-                    NavigationLink(destination: RegisterView()) {
-                        Text("Crea tu cuenta")
-                    }
-                    .buttonStyle(FoodiefyButtonStyle())
-                }
-                
-                Spacer()
+                Text("Diseña tu alimentación, alcanza tus metas")
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
             }
-            .padding(.vertical, 40)
+            
+            Image("image")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 250, height: 250)
+            
+            Spacer()
+            
+            VStack(spacing: 15) {
+                Button("Inicia sesión") {
+                    router.navigate(to: .login)
+                }
+                .buttonStyle(FoodiefyButtonStyle())
+                
+                Button("Crea tu cuenta") {
+                    router.navigate(to: .register)
+                }
+                .buttonStyle(FoodiefyButtonStyle())
+            }
+            
+            Spacer()
         }
     }
     
