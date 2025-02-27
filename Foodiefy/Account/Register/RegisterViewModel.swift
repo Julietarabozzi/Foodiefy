@@ -6,27 +6,43 @@ class RegisterViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var confirmPassword: String = ""
     @Published var isLoading: Bool = false
-    @Published var registrationSuccess: Bool = false
-    
-    func register(completion: @escaping (Bool) -> Void) {
-        guard password == confirmPassword else {
-            print("❌ Las contraseñas no coinciden")
-            completion(false) // Llamamos al callback con `false`
+    @Published var errorMessage: String?
+
+    func register(sessionManager: UserSessionManager, completion: @escaping (Bool) -> Void) {
+        guard !email.isEmpty, !password.isEmpty, !confirmPassword.isEmpty else {
+            errorMessage = "Todos los campos son obligatorios"
+            completion(false)
             return
         }
-        
+
+        guard password == confirmPassword else {
+            errorMessage = "Las contraseñas no coinciden"
+            completion(false)
+            return
+        }
+
         isLoading = true
-        APIService.shared.registerUser(name: "Nuevo Usuario", email: email, password: password) { [weak self] result in
+
+        RegisterService.shared.registerUser(name: "Nuevo Usuario", email: email, password: password) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch result {
-                case .success(let message):
-                    print("✅ Registro exitoso: \(message)")
-                    self?.registrationSuccess = true
-                    completion(true)
+                case .success(let response):
+
+                    if let token = response.token, let userId = response.userId {
+                        sessionManager.token = token
+                        sessionManager.userId = userId
+                        sessionManager.login()
+
+                        completion(true)
+                        
+                    } else {
+                        completion(false)
+                    }
+                    
                 case .failure(let error):
-                    print("❌ Error en el registro: \(error.localizedDescription)")
-                    completion(false) 
+                    self?.errorMessage = error.localizedDescription
+                    completion(false)
                 }
             }
         }

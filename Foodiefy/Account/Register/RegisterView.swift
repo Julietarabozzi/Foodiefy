@@ -30,15 +30,22 @@ struct RegisterView: View {
                 FoodiefyPasswordField(placeholder: "Confirmar contraseña", text: $viewModel.confirmPassword)
                     .textContentType(.none)
             }
-            
+
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.footnote)
+                    .padding(.top, 5)
+            }
+
             if viewModel.isLoading {
                 ProgressView().padding()
             } else {
                 Button("Registrarse") {
-                    viewModel.register { success in
+                    viewModel.register(sessionManager: sessionManager) { success in
                         if success {
                             DispatchQueue.main.async {
-                                router.navigate(to: .onboarding) // ✅ Se ejecuta en el hilo principal
+                                router.navigate(to: .onboarding)
                             }
                         }
                     }

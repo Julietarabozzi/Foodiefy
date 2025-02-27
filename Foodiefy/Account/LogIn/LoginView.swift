@@ -23,14 +23,22 @@ struct LoginView: View {
                 FoodiefyPasswordField(placeholder: "Contraseña", text: $viewModel.password)
             }
 
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.footnote)
+                    .padding(.top, 5)
+            }
+
             if viewModel.isLoading {
                 ProgressView().padding()
             } else {
                 Button("Iniciar sesión") {
-                    viewModel.login { success in
+                    viewModel.login(sessionManager: sessionManager) { success in
                         if success {
-                            sessionManager.login()
-                            router.navigate(to: .home)
+                            DispatchQueue.main.async {
+                                router.navigate(to: .home)
+                            }
                         }
                     }
                 }

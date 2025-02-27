@@ -1,10 +1,3 @@
-//
-//  UserSessionManager.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 23/02/2025.
-//
-
 import Foundation
 import SwiftUI
 
@@ -15,8 +8,22 @@ class UserSessionManager: ObservableObject {
         }
     }
 
+    @Published var token: String? {
+        didSet {
+            UserDefaults.standard.set(token, forKey: "token")
+        }
+    }
+
+    @Published var userId: String? {
+        didSet {
+            UserDefaults.standard.set(userId, forKey: "userId")
+        }
+    }
+
     init() {
         self.isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+        self.token = UserDefaults.standard.string(forKey: "token")
+        self.userId = UserDefaults.standard.string(forKey: "userId")
     }
 
     func login() {
@@ -28,7 +35,11 @@ class UserSessionManager: ObservableObject {
     func logout() {
         DispatchQueue.main.async {
             self.isLoggedIn = false
+            self.token = nil
+            self.userId = nil
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
+            UserDefaults.standard.removeObject(forKey: "token")
+            UserDefaults.standard.removeObject(forKey: "userId")
         }
     }
 }
