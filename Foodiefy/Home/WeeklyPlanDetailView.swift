@@ -1,30 +1,21 @@
-//
-//  WeeklyPlanDetailView.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 23/02/2025.
-//
-
 import SwiftUI
 
-// 🔹 Pantalla de detalle del plan semanal
-struct WeeklyPlanDetailView: View {
-    let week: WeeklyMealPlan
+struct MealPlanDetailView: View {
+    let mealPlan: MealPlanService.MealPlanResponse
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {
-                Text("Plan de comidas de la semana")
+                Text("Detalles del Plan")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.horizontal)
-                
-                Text(week.meals)
+
+                Text(mealPlan.mealPlan)
                     .padding()
             }
         }
-        .navigationTitle("Detalles del Plan")
+        .navigationTitle("Plan Alimenticio")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-

@@ -1,12 +1,5 @@
 import Foundation
-
-// 📅 Modelo para representar cada semana del plan
-struct WeeklyMealPlan: Identifiable {
-    let id = UUID()
-    let startDate: String
-    let endDate: String
-    let meals: String
-}
+import SwiftUI
 
 class OnboardingViewModel: ObservableObject {
     @Published var name: String = ""
@@ -16,54 +9,44 @@ class OnboardingViewModel: ObservableObject {
     @Published var activityLevel: String = ""
     @Published var dietaryPreferences: [String] = []
     @Published var goals: String = ""
-    @Published var mealPlan: String = ""
     @Published var isSubmitting = false
+    @Published var isLoading = false
+    @Published var errorMessage: String?
 
-    // 🔹 Agregamos esta propiedad para manejar múltiples semanas
-    @Published var weeklyPlans: [WeeklyMealPlan] = []
+    func sendDataToBackend(sessionManager: UserSessionManager, completion: @escaping (Bool) -> Void) {
+        guard let token = sessionManager.token else {
+            errorMessage = "No hay token disponible"
+            completion(false)
+            return
+        }
 
-    func sendDataToBackend(completion: @escaping (Bool) -> Void) {
-        let userData: [String: Any] = [
-            "name": name,
-            "age": age,
-            "weight": weight,
-            "height": height,
-            "goals": goals,
-            "dietaryPreferences": dietaryPreferences,
-            "activityLevel": activityLevel
-        ]
-        
+        let onboardingData = OnboardingService.OnboardingData(
+            age: Int(age) ?? 0,
+            weight: Double(weight) ?? 0.0,
+            height: Double(height) ?? 0.0,
+            goals: goals,
+            dietaryPreferences: dietaryPreferences,
+            activityLevel: activityLevel
+        )
+
         isSubmitting = true
+        isLoading = true
+        print("🚀 Enviando datos de onboarding al backend...")
 
-        MealPlanService.shared.generateMealPlan(userData) { success, mealPlan in
+        OnboardingService.shared.saveOnboardingData(onboardingData, token: token) { [weak self] result in
             DispatchQueue.main.async {
-                self.isSubmitting = false
-                if success {
-                    let newPlan = WeeklyMealPlan(
-                        startDate: self.getStartDate(),
-                        endDate: self.getEndDate(),
-                        meals: mealPlan ?? "No recibido"
-                    )
-                    self.weeklyPlans.append(newPlan)
-                    completion(true)
-                } else {
+                self?.isSubmitting = false
+                self?.isLoading = false
+                switch result {
+                case .success(let message):
+                    print("✅ Onboarding guardado: \(message)")
+                    completion(true) // 🔹 Ahora solo confirmamos que los datos se guardaron
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                    print("❌ Error en onboarding: \(error.localizedDescription)")
                     completion(false)
                 }
             }
         }
-    }
-
-    // 🔹 Métodos para calcular la fecha de inicio y fin
-    private func getStartDate() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd/MM"
-        return formatter.string(from: Date())
-    }
-
-    private func getEndDate() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd/MM"
-        guard let nextWeek = Calendar.current.date(byAdding: .day, value: 6, to: Date()) else { return "??/??" }
-        return formatter.string(from: nextWeek)
     }
 }

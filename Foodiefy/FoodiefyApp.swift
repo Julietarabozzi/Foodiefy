@@ -12,6 +12,7 @@ struct FoodiefyApp: App {
     @StateObject private var sessionManager = UserSessionManager()
     @StateObject private var router = AppRouter()
     @StateObject private var onboardingViewModel = OnboardingViewModel()
+    @StateObject private var mealPlanViewModel = MealPlanViewModel()
 
     var body: some Scene {
         WindowGroup {
@@ -19,6 +20,7 @@ struct FoodiefyApp: App {
                 .environmentObject(sessionManager)
                 .environmentObject(router)
                 .environmentObject(onboardingViewModel)
+                .environmentObject(mealPlanViewModel)
         }
     }
 }

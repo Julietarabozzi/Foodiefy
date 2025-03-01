@@ -3,6 +3,7 @@ import SwiftUI
 struct SummaryView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     @EnvironmentObject var router: AppRouter // Agregamos el router
+    @EnvironmentObject var sessionManager: UserSessionManager
 
     var body: some View {
         ZStack {
@@ -32,10 +33,10 @@ struct SummaryView: View {
                 Spacer()
 
                 Button(action: {
-                    viewModel.sendDataToBackend { success in
+                    viewModel.sendDataToBackend(sessionManager: sessionManager) { success in
                         if success {
                             print("✅ Datos enviados al backend.")
-                            router.navigate(to: .loading) // ✅ Navegar a la pantalla de carga
+                            router.navigate(to: .loading) // ✅ Ahora LoadingView se encargará de esperar los planes
                         } else {
                             print("❌ Error al enviar los datos.")
                         }

@@ -1,36 +1,29 @@
-//
-//  WeeklyPlanCard.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 23/02/2025.
-//
-
-// 🔹 Tarjeta de resumen del plan semanal
 import SwiftUI
 
-struct WeeklyPlanCard: View {
-    let week: WeeklyMealPlan
-    let index: Int
-    
+struct MealPlanCard: View {
+    let mealPlan: MealPlanService.MealPlanResponse
+
     var body: some View {
         HStack(spacing: 15) {
-            Image(systemName: getIconForIndex(index))
+            Image(systemName: getIconForPlan(mealPlan))
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
-                .foregroundColor(getColorForIndex(index))
+                .foregroundColor(getColorForPlan(mealPlan))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             
             VStack(alignment: .leading, spacing: 5) {
-                Text("Plan semanal")
+                Text("Plan Alimenticio")
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                Text("\(week.startDate) - \(week.endDate)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                Text("Ver detalle")
+                if let createdAt = mealPlan.createdAt {
+                    Text("Creado el \(formatDate(createdAt))")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                Text("Ver detalles")
                     .font(.footnote)
                     .foregroundColor(Color("darkGreenFoodiefy"))
             }
@@ -42,13 +35,23 @@ struct WeeklyPlanCard: View {
             .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5))
     }
     
-    func getIconForIndex(_ index: Int) -> String {
+    func getIconForPlan(_ plan: MealPlanService.MealPlanResponse) -> String {
         let icons = ["fork.knife", "leaf", "flame", "cup.and.saucer", "cart", "sparkles", "heart"]
-        return icons[index % icons.count]
+        return icons[Int(plan.id.hashValue) % icons.count]
     }
     
-    func getColorForIndex(_ index: Int) -> Color {
+    func getColorForPlan(_ plan: MealPlanService.MealPlanResponse) -> Color {
         let colors: [Color] = [.green, .blue, .orange, .red, .purple, .pink, .yellow]
-        return colors[index % colors.count]
+        return colors[Int(plan.id.hashValue) % colors.count]
+    }
+    
+    func formatDate(_ dateString: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        if let date = formatter.date(from: dateString) {
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateStyle = .medium
+            return outputFormatter.string(from: date)
+        }
+        return "Fecha desconocida"
     }
 }

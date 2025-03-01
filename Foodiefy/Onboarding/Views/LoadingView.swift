@@ -1,38 +1,50 @@
 import SwiftUI
 
 struct LoadingView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var mealPlanViewModel: MealPlanViewModel
     @EnvironmentObject var router: AppRouter
     @EnvironmentObject var sessionManager: UserSessionManager
+
+    @State private var retryCount = 0
+    private let maxRetries = 10
 
     var body: some View {
         VStack(spacing: 30) {
             Spacer()
-
-            Image(systemName: "hourglass")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150, height: 150)
-                .foregroundColor(.blue)
-
-            Text("Estamos preparando tu plan alimenticio...")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+            Text("Preparando tu experiencia personalizada...")
+                .font(.title)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding()
 
             ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
-                .scaleEffect(2)
+                .padding()
+
+            if retryCount >= maxRetries {
+                Text("⚠️ No se pudo obtener el plan alimenticio. Intenta más tarde.")
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
 
             Spacer()
         }
-        .navigationBarHidden(true)
-        .onReceive(viewModel.$weeklyPlans) { newPlans in
-            if !newPlans.isEmpty {
-                sessionManager.login()
-                router.navigate(to: .home) // ✅ Cambiamos la navegación
+        .onAppear {
+            fetchWithRetries()
+        }
+        .padding()
+    }
+
+    private func fetchWithRetries() {
+        mealPlanViewModel.fetchMealPlans(sessionManager: sessionManager)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            if mealPlanViewModel.mealPlans.isEmpty && retryCount < maxRetries {
+                retryCount += 1
+                print("📡 Intento \(retryCount) de \(maxRetries) para obtener planes alimenticios...")
+                fetchWithRetries()
+            } else if !mealPlanViewModel.mealPlans.isEmpty {
+                print("✅ Planes alimenticios encontrados, navegando a Home...")
+                router.navigate(to: .home)
             }
         }
     }

@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var mealPlanViewModel: MealPlanViewModel
+    @EnvironmentObject var sessionManager: UserSessionManager
 
     var body: some View {
+        NavigationView {
             ZStack {
                 Color("greyBackground")
                     .edgesIgnoringSafeArea(.all)
@@ -16,7 +18,7 @@ struct HomeView: View {
                             .frame(width: 80, height: 80)
                             .foregroundColor(Color("darkGreenFoodiefy"))
 
-                        Text("Hola, \(viewModel.name)!")
+                        Text("Hola, bienvenido!")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
@@ -27,7 +29,7 @@ struct HomeView: View {
                     }
                     .padding(.top, 20)
                     
-                    if viewModel.weeklyPlans.isEmpty {
+                    if mealPlanViewModel.mealPlans.isEmpty {
                         Text("No hay planes generados todavía.")
                             .font(.headline)
                             .foregroundColor(.secondary)
@@ -35,9 +37,9 @@ struct HomeView: View {
                     } else {
                         ScrollView {
                             VStack(spacing: 15) {
-                                ForEach(Array(viewModel.weeklyPlans.enumerated()), id: \ .element.id) { index, week in
-                                    NavigationLink(destination: WeeklyPlanDetailView(week: week)) {
-                                        WeeklyPlanCard(week: week, index: index)
+                                ForEach(mealPlanViewModel.mealPlans, id: \.id) { plan in
+                                    NavigationLink(destination: MealPlanDetailView(mealPlan: plan)) {
+                                        MealPlanCard(mealPlan: plan)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }
@@ -48,5 +50,11 @@ struct HomeView: View {
                     Spacer()
                 }
             }
+            .navigationTitle("Tus Planes")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                mealPlanViewModel.fetchMealPlans(sessionManager: sessionManager)
+            }
         }
     }
+}
