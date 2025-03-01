@@ -25,6 +25,7 @@ struct RegisterView: View {
                 .frame(width: 250, height: 250)
 
             VStack(spacing: 15) {
+                FoodiefyTextField(placeholder: "Nombre", text: $viewModel.name) // 🔹 Nuevo campo
                 FoodiefyTextField(placeholder: "Correo electrónico", text: $viewModel.email)
                 FoodiefyPasswordField(placeholder: "Contraseña", text: $viewModel.password)
                 FoodiefyPasswordField(placeholder: "Confirmar contraseña", text: $viewModel.confirmPassword)
@@ -50,7 +51,6 @@ struct RegisterView: View {
                         }
                     }
                 }
-                .navigationBarHidden(true)
                 .buttonStyle(FoodiefyButtonStyle())
             }
             Spacer()
@@ -59,4 +59,3 @@ struct RegisterView: View {
         .modifier(NavigationBackModifier(color: Color("darkViolet")))
     }
 }
-
