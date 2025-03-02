@@ -14,7 +14,15 @@ class ProgressViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     private var lastFetchedUserId: String?
-
+    
+    func resetProgress() {
+        DispatchQueue.main.async {
+            self.weeklyProgress = Array(repeating: false, count: 7)
+            self.errorMessage = nil
+            self.lastFetchedUserId = nil
+        }
+    }
+        
     func fetchProgress(token: String, userId: String) {
         // Evitar recargas innecesarias
         if lastFetchedUserId == userId {

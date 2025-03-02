@@ -46,11 +46,6 @@ struct WeeklyProgressView: View {
             }
             Spacer()
         }
-        .onAppear {
-            if let userId = sessionManager.userId {
-                progressViewModel.fetchProgress(token: sessionManager.token ?? "", userId: userId)
-            }
-        }
     }
 }
 

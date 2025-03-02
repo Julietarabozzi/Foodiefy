@@ -18,10 +18,6 @@ class UserSessionManager: ObservableObject {
         didSet {
             UserDefaults.standard.set(userId, forKey: "userId")
             if let userId = userId {
-                // 🔹 Aseguramos que ProgressViewModel se actualice correctamente
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: .userChanged, object: nil, userInfo: ["userId": userId])
-                }
             }
         }
     }
@@ -38,7 +34,6 @@ class UserSessionManager: ObservableObject {
         self.userId = UserDefaults.standard.string(forKey: "userId")
         self.name = UserDefaults.standard.string(forKey: "userName")
     }
-
     func login(name: String, token: String, userId: String) {
         DispatchQueue.main.async {
             self.isLoggedIn = true
@@ -48,7 +43,7 @@ class UserSessionManager: ObservableObject {
         }
     }
 
-    func logout() {
+    func logout(progressViewModel: ProgressViewModel) {
         DispatchQueue.main.async {
             self.isLoggedIn = false
             self.token = nil
@@ -58,13 +53,9 @@ class UserSessionManager: ObservableObject {
             UserDefaults.standard.removeObject(forKey: "token")
             UserDefaults.standard.removeObject(forKey: "userId")
             UserDefaults.standard.removeObject(forKey: "userName")
-            
-            // 🔹 Enviamos una notificación global para limpiar progreso
-            NotificationCenter.default.post(name: .userChanged, object: nil, userInfo: nil)
+
+            // 🔹 Resetear el progreso al cerrar sesión
+            progressViewModel.resetProgress()
         }
     }
-}
-
-extension Notification.Name {
-    static let userChanged = Notification.Name("userChanged")
 }

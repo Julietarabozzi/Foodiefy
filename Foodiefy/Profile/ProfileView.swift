@@ -3,6 +3,7 @@ import SwiftUI
 // 📌 Vista principal del perfil
 struct ProfileView: View {
     @EnvironmentObject var sessionManager: UserSessionManager
+    @EnvironmentObject var progressViewModel: ProgressViewModel
     @StateObject private var profileViewModel = ProfileViewModel()
     @State private var isEditing = false
 
@@ -11,7 +12,7 @@ struct ProfileView: View {
             VStack {
                 // 🔹 Encabezado con botón de logout
                 HStack {
-                    Button(action: { sessionManager.logout() }) {
+                    Button(action: { sessionManager.logout(progressViewModel: progressViewModel) }) {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
                             .resizable()
                             .frame(width: 24, height: 24)
