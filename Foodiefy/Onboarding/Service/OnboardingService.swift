@@ -54,25 +54,33 @@ struct OnboardingService {
 
 extension OnboardingService {
     func updateOnboardingData(_ data: OnboardingData, token: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let url = URL(string: baseURL) else {
+        guard let url = URL(string: "\(baseURL)/update") else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "URL inválida"])))
             return
         }
 
         var request = URLRequest(url: url)
-        request.httpMethod = "PUT"  // 🆕 Ahora hacemos una actualización
+        request.httpMethod = "PUT"  // ✅ Cambio a `PUT`
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-        request.httpBody = try? JSONEncoder().encode(data)
+        do {
+            request.httpBody = try JSONEncoder().encode(data)
+            print("📡 Enviando request al backend:", String(data: request.httpBody!, encoding: .utf8) ?? "No se pudo convertir a JSON")
+        } catch {
+            completion(.failure(error))
+            return
+        }
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
+                print("❌ Error en la request:", error.localizedDescription)
                 completion(.failure(error))
                 return
             }
 
             guard let data = data else {
+                print("❌ No se recibieron datos del backend")
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No se recibieron datos"])))
                 return
             }
@@ -80,12 +88,14 @@ extension OnboardingService {
             do {
                 let responseDict = try JSONDecoder().decode([String: String].self, from: data)
                 if let message = responseDict["message"] {
-                    print("📡 Respuesta del backend (Actualización Onboarding): \(responseDict)")
+                    print("✅ Respuesta del backend (Actualización Onboarding): \(responseDict)")
                     completion(.success(message))
                 } else {
+                    print("❌ Respuesta inválida del backend:", responseDict)
                     completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Respuesta inválida"])))
                 }
             } catch {
+                print("❌ Error al decodificar la respuesta:", error.localizedDescription)
                 completion(.failure(error))
             }
         }.resume()

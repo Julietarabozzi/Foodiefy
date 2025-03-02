@@ -29,19 +29,23 @@ class ProfileViewModel: ObservableObject {
                 self.isLoading = false
                 if let error = error {
                     self.errorMessage = error.localizedDescription
+                    print("❌ Error al cargar perfil:", error.localizedDescription)
                     return
                 }
 
                 guard let data = data else {
                     self.errorMessage = "No se recibieron datos"
+                    print("❌ No se recibieron datos")
                     return
                 }
 
                 do {
                     let response = try JSONDecoder().decode(OnboardingState.self, from: data)
                     self.onboardingData = response
+                    print("✅ Datos cargados exitosamente:", response)
                 } catch {
                     self.errorMessage = "Error al decodificar datos"
+                    print("❌ Error al decodificar datos:", error.localizedDescription)
                 }
             }
         }.resume()
@@ -64,6 +68,7 @@ class ProfileViewModel: ObservableObject {
         )
 
         isLoading = true
+        print("🚀 Enviando datos de actualización:", updatedData)
 
         OnboardingService.shared.updateOnboardingData(updatedData, token: token) { [weak self] result in
             DispatchQueue.main.async {

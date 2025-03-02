@@ -99,7 +99,19 @@ struct ProfileView: View {
                     .padding()
                 }
 
-                Button(action: { isEditing.toggle() }) {
+                Button(action: {
+                    if isEditing {
+                        profileViewModel.updateProfile(sessionManager: sessionManager) { success in
+                            if success {
+                                isEditing.toggle()
+                            } else {
+                                print("❌ Falló la actualización del perfil")
+                            }
+                        }
+                    } else {
+                        isEditing.toggle()
+                    }
+                }) {
                     Text(isEditing ? "Guardar Cambios" : "Editar Perfil")
                         .frame(maxWidth: .infinity)
                         .padding()
