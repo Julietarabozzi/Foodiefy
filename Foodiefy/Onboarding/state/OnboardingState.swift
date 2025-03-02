@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct OnboardingState {
+struct OnboardingState: Decodable {
     var age: Int = 0
     var weight: Double = 0
     var height: Double = 0

@@ -2,108 +2,113 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject var sessionManager: UserSessionManager
-    @EnvironmentObject var router: AppRouter
-    
-    // Datos del perfil
-    @State private var name: String = "Julieta Rabozzi"
-    @State private var age: String = "25"
-    @State private var weight: String = "55"
-    @State private var height: String = "165"
-    @State private var goal: String = "Mantener peso"
-    @State private var dietaryPreferences: [String] = ["Vegetariano", "Intolerante a la lactosa"]
-    @State private var activityLevel: String = "Intermedio"
+    @StateObject private var profileViewModel = ProfileViewModel()
+    @State private var isEditing = false
 
     var body: some View {
-            ZStack {
-                // Fondo
-                Color("greyBackground")
-                    .edgesIgnoringSafeArea(.all)
+        NavigationView {
+            VStack {
+                // 🔹 Encabezado con botón de logout
+                HStack {
+                    Button(action: {
+                        sessionManager.logout()
+                    }) {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.red)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Mi Perfil")
+                        .font(.title2)
+                        .bold()
+                    
+                    Spacer()
+                    
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .frame(width: 35, height: 35)
+                        .foregroundColor(.gray)
+                }
+                .padding(.horizontal)
+                .padding(.top, 10)
 
                 ScrollView {
-                    VStack(alignment:.leading, spacing: 20) {
-                        // Encabezado
-                        Text("Mi Perfil")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                            .padding()
-
-                        // Visualización de los datos
-                        VStack(spacing: 15) {
-                            HStack {
-                                ProfileItemView(label: "Nombre", value: name)
-                                Spacer()
-                            }
-                            HStack{
-                                ProfileItemView(label: "Edad", value: age)
-                                Spacer()
-                            }
-                            HStack {
-                                ProfileItemView(label: "Peso (kg)", value: weight)
-                                Spacer()
-                            }
-                            
-                            HStack{
-                                ProfileItemView(label: "Altura (cm)", value: height)
-                                Spacer()
-                            }
-
-                            HStack {
-                                ProfileItemView(label: "Objetivo", value: goal)
-                                Spacer()
-                            }
-                            HStack{
-                                ProfileItemView(label: "Restricciones alimenticias", value: dietaryPreferences.joined(separator: ", "))
-                                Spacer()
-                            }
-                            HStack{
-                                ProfileItemView(label: "Nivel de actividad física", value: activityLevel)
-                                Spacer()
-                            }
+                    VStack(spacing: 15) {
+                        ProfileCard(title: "Información Personal", icon: "person.fill") {
+                            ProfileTextField(title: "Nombre", text: $sessionManager.name.bound, isEditable: false)
+                            ProfileTextField(title: "Edad", text: Binding(
+                                get: { "\(profileViewModel.onboardingData.age)" },
+                                set: { _ in }
+                            ), isEditable: false)
                         }
-                        .padding(.horizontal, 40)
-                        
-                        // Botón de Logout
-                        Button(action: {
-                            sessionManager.logout()
-                        }) {
-                            Text("Cerrar sesión")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.red)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
+
+                        ProfileCard(title: "Objetivo", icon: "target") {
+                            Picker("Selecciona un objetivo", selection: $profileViewModel.onboardingData.goals) {
+                                ForEach(GoalOptions.allCases, id: \.self) { goal in
+                                    Text(goal.rawValue).tag(goal.rawValue)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .disabled(!isEditing)
                         }
-                        .padding(.horizontal, 40)
-                        
-                        Spacer()
+
+                        ProfileCard(title: "Restricciones Alimenticias", icon: "leaf.fill") {
+                            Picker("Selecciona una dieta", selection: Binding(
+                                get: { profileViewModel.onboardingData.dietaryPreferences.first ?? "" },
+                                set: { newValue in
+                                    profileViewModel.onboardingData.dietaryPreferences = [newValue] // 🔹 Reemplazamos el array completo con la nueva selección
+                                }
+                            )) {
+                                ForEach(DietaryPreferencesOptions.allCases, id: \.self) { diet in
+                                    Text(diet.rawValue).tag(diet.rawValue)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .disabled(!isEditing)
+                        }
+
+                        ProfileCard(title: "Nivel de Actividad Física", icon: "figure.walk") {
+                            Picker("Selecciona tu nivel", selection: $profileViewModel.onboardingData.activityLevel) {
+                                ForEach(ActivityLevelOptions.allCases, id: \.self) { level in
+                                    Text(level.rawValue).tag(level.rawValue)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .disabled(!isEditing)
+                        }
                     }
+                    .padding()
                 }
+
+                Button(action: {
+                    isEditing.toggle()
+                }) {
+                    Text(isEditing ? "Guardar Cambios" : "Editar Perfil")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(isEditing ? Color.blue : Color.gray)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 20)
             }
-            .navigationBarTitle("", displayMode: .inline)
+            .navigationBarHidden(true)
         }
-}
-
-// Componente reutilizable para los ítems del perfil
-struct ProfileItemView: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(label)
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Text(value)
-                .font(.body)
-                .foregroundColor(.primary)
-                .padding(.vertical, 5)
-                .padding(.horizontal, 10)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
+        .onAppear {
+            profileViewModel.loadProfile(sessionManager: sessionManager)
         }
     }
 }
-#Preview{
-    ProfileView()
+// 🔹 Extensión para manejar opcionales en Binding
+extension Binding where Value == String? {
+    var bound: Binding<String> {
+        Binding<String>(
+            get: { self.wrappedValue ?? "" }, // Si es nil, devuelve ""
+            set: { self.wrappedValue = $0.isEmpty ? nil : $0 } // Si está vacío, lo convierte en nil
+        )
+    }
 }
