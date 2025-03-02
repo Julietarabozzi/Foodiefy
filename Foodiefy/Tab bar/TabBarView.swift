@@ -25,7 +25,7 @@ struct TabBarView: View {
                     Text("Escaneo")
                 }
             
-            WeeklyProgressView()
+            ProgressTabView() 
                 .tabItem {
                     Image(systemName: "chart.bar.fill")
                     Text("Mi progreso")
