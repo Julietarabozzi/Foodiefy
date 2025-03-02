@@ -44,6 +44,23 @@ struct ProfileView: View {
                             ), isEditable: false)
                         }
 
+                        // 📌 Peso y altura
+                        ProfileCard(title: "Peso y Altura", icon: "scalemass.fill") {
+                            HStack {
+                                ProfileTextField(title: "Peso (kg)", text: Binding(
+                                    get: { "\(profileViewModel.onboardingData.weight)" },
+                                    set: { profileViewModel.onboardingData.weight = Double($0) ?? profileViewModel.onboardingData.weight }
+                                ), isEditable: isEditing)
+
+                                Spacer()
+
+                                ProfileTextField(title: "Altura (cm)", text: Binding(
+                                    get: { "\(profileViewModel.onboardingData.height)" },
+                                    set: { profileViewModel.onboardingData.height = Double($0) ?? profileViewModel.onboardingData.height }
+                                ), isEditable: isEditing)
+                            }
+                        }
+
                         ProfileCard(title: "Objetivo", icon: "target") {
                             Picker("Selecciona un objetivo", selection: $profileViewModel.onboardingData.goals) {
                                 ForEach(GoalOptions.allCases, id: \.self) { goal in
