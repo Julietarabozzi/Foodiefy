@@ -6,12 +6,12 @@ struct RegisterView: View {
     @EnvironmentObject var sessionManager: UserSessionManager
 
     var body: some View {
-        VStack(spacing: 20) {
-            Spacer()
+        VStack(spacing: 10) {
             Text("Crear cuenta")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(Color("darkGreenFoodiefy"))
+                .padding(.top)
 
             Text("Regístrate y comienza a alcanzar tus metas")
                 .font(.subheadline)
@@ -57,5 +57,6 @@ struct RegisterView: View {
         }
         .padding()
         .modifier(NavigationBackModifier(color: Color("darkViolet")))
+        .navigationBarHidden(true)
     }
 }
