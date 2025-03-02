@@ -25,7 +25,8 @@ class LoginViewModel: ObservableObject {
                     if let token = response.token, let user = response.user {
                         sessionManager.token = token
                         sessionManager.userId = user.id
-                        sessionManager.login()
+                        sessionManager.name = user.name 
+                        sessionManager.login(name: user.name, token: token, userId: user.id)
 
                         completion(true)
                     } else {

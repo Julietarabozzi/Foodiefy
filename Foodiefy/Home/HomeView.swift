@@ -18,7 +18,7 @@ struct HomeView: View {
                             .frame(width: 80, height: 80)
                             .foregroundColor(Color("darkGreenFoodiefy"))
 
-                        Text("Hola, bienvenido!")
+                        Text("Hola, \(sessionManager.name ?? "usuario")!")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)

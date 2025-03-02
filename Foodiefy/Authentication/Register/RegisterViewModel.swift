@@ -32,7 +32,7 @@ class RegisterViewModel: ObservableObject {
                     if let token = response.token, let userId = response.userId {
                         sessionManager.token = token
                         sessionManager.userId = userId
-                        sessionManager.login()
+                        sessionManager.login(name: self?.name ?? "Usuario", token: token, userId: userId)
 
                         completion(true)
                     } else {
