@@ -1,21 +1,14 @@
 import SwiftUI
 
 // 📌 Componente para mostrar secciones en el perfil
-import SwiftUI
-
-// 📌 Componente para mostrar secciones en el perfil con icono y botón de edición
 struct ProfileCard<Content: View>: View {
     let title: String
     let icon: String
-    let isEditable: Bool
-    let onEdit: (() -> Void)?
     let content: Content
 
-    init(title: String, icon: String, isEditable: Bool = false, onEdit: (() -> Void)? = nil, @ViewBuilder content: () -> Content) {
+    init(title: String, icon: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.icon = icon
-        self.isEditable = isEditable
-        self.onEdit = onEdit
         self.content = content()
     }
 
@@ -27,15 +20,6 @@ struct ProfileCard<Content: View>: View {
                     .foregroundColor(.gray)
                 
                 Spacer()
-                
-                if isEditable, let onEdit = onEdit {
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil.circle.fill")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.blue)
-                    }
-                }
             }
 
             content
@@ -45,8 +29,6 @@ struct ProfileCard<Content: View>: View {
         .cornerRadius(12)
     }
 }
-// 📌 Campo de perfil con opción editable
-import SwiftUI
 
 // 📌 Campo de perfil con opción editable
 struct ProfileTextField: View {
@@ -75,27 +57,32 @@ struct ProfileTextField: View {
     }
 }
 
-// 📌 Opciones para selección de objetivos
-enum GoalOptions: String, CaseIterable {
+// 📌 Opciones para selección de objetivos (coinciden con el Onboarding)
+enum GoalOptions: String, CaseIterable, Identifiable {
+    case ganarPeso = "Ganar peso"
     case perderPeso = "Perder peso"
-    case mantenerPeso = "Mantenerme"
-    case ganarMasa = "Ganar masa muscular"
+    case mantenerPeso = "Mantener peso"
+    
+    var id: String { self.rawValue }
 }
 
-// 📌 Opciones para selección de restricciones alimenticias
-enum DietaryPreferencesOptions: String, CaseIterable {
-    case vegano = "Vegano"
+// 📌 Opciones para selección de restricciones alimenticias (coinciden con el Onboarding)
+enum DietaryPreferences: String, CaseIterable, Identifiable {
+    case celiaco = "Celíaco"
     case vegetariano = "Vegetariano"
-    case sinGluten = "Sin gluten"
-    case sinLactosa = "Sin lactosa"
-    case omnivoro = "Omnívoro"
+    case vegano = "Vegano"
+    case intoleranteLactosa = "Intolerante a la lactosa"
+    case noTengo = "No tengo"
+    
+    var id: String { self.rawValue }
 }
 
-// 📌 Opciones para selección del nivel de actividad física
-enum ActivityLevelOptions: String, CaseIterable {
-    case sedentario = "Sedentario"
-    case ligero = "Ligero"
-    case moderado = "Moderado"
-    case activo = "Activo"
-    case muyActivo = "Muy activo"
+// 📌 Opciones para selección del nivel de actividad física (coinciden con el Onboarding)
+enum ActivityLevel: String, CaseIterable, Identifiable {
+    case principiante = "Principiante"
+    case intermedio = "Intermedio"
+    case avanzado = "Avanzado"
+    
+    var id: String { self.rawValue }
 }
+

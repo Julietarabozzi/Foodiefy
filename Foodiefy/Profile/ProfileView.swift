@@ -1,5 +1,6 @@
 import SwiftUI
 
+// 📌 Vista principal del perfil
 struct ProfileView: View {
     @EnvironmentObject var sessionManager: UserSessionManager
     @StateObject private var profileViewModel = ProfileViewModel()
@@ -10,9 +11,7 @@ struct ProfileView: View {
             VStack {
                 // 🔹 Encabezado con botón de logout
                 HStack {
-                    Button(action: {
-                        sessionManager.logout()
-                    }) {
+                    Button(action: { sessionManager.logout() }) {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
                             .resizable()
                             .frame(width: 24, height: 24)
@@ -57,12 +56,12 @@ struct ProfileView: View {
 
                         ProfileCard(title: "Restricciones Alimenticias", icon: "leaf.fill") {
                             Picker("Selecciona una dieta", selection: Binding(
-                                get: { profileViewModel.onboardingData.dietaryPreferences.first ?? "" },
+                                get: { profileViewModel.onboardingData.dietaryPreferences.first ?? "No tengo" },
                                 set: { newValue in
-                                    profileViewModel.onboardingData.dietaryPreferences = [newValue] // 🔹 Reemplazamos el array completo con la nueva selección
+                                    profileViewModel.onboardingData.dietaryPreferences = [newValue]
                                 }
                             )) {
-                                ForEach(DietaryPreferencesOptions.allCases, id: \.self) { diet in
+                                ForEach(DietaryPreferences.allCases, id: \.self) { diet in
                                     Text(diet.rawValue).tag(diet.rawValue)
                                 }
                             }
@@ -72,7 +71,7 @@ struct ProfileView: View {
 
                         ProfileCard(title: "Nivel de Actividad Física", icon: "figure.walk") {
                             Picker("Selecciona tu nivel", selection: $profileViewModel.onboardingData.activityLevel) {
-                                ForEach(ActivityLevelOptions.allCases, id: \.self) { level in
+                                ForEach(ActivityLevel.allCases, id: \.self) { level in
                                     Text(level.rawValue).tag(level.rawValue)
                                 }
                             }
@@ -83,9 +82,7 @@ struct ProfileView: View {
                     .padding()
                 }
 
-                Button(action: {
-                    isEditing.toggle()
-                }) {
+                Button(action: { isEditing.toggle() }) {
                     Text(isEditing ? "Guardar Cambios" : "Editar Perfil")
                         .frame(maxWidth: .infinity)
                         .padding()
