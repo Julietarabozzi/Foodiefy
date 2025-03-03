@@ -31,7 +31,6 @@ class OnboardingViewModel: ObservableObject {
 
         isSubmitting = true
         isLoading = true
-        print("🚀 Enviando datos de onboarding al backend...")
 
         OnboardingService.shared.saveOnboardingData(onboardingData, token: token) { [weak self] result in
             DispatchQueue.main.async {
@@ -39,11 +38,9 @@ class OnboardingViewModel: ObservableObject {
                 self?.isLoading = false
                 switch result {
                 case .success(let message):
-                    print("✅ Onboarding guardado: \(message)")
-                    completion(true) // 🔹 Ahora solo confirmamos que los datos se guardaron
+                    completion(true)
                 case .failure(let error):
                     self?.errorMessage = error.localizedDescription
-                    print("❌ Error en onboarding: \(error.localizedDescription)")
                     completion(false)
                 }
             }

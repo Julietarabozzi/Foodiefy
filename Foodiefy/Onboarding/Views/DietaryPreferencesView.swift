@@ -44,7 +44,7 @@ private struct DietaryHeaderView: View {
                 .fontWeight(.bold)
                 .foregroundColor(Color(.darkGreenFoodiefy))
         }
-        .padding()
+        .padding(.leading, 10)
     }
 }
 
@@ -115,10 +115,4 @@ private struct DietaryOptionButton: View {
             .cornerRadius(8)
         }
     }
-}
-
-#Preview {
-    DietaryPreferencesView()
-        .environmentObject(OnboardingViewModel())
-        .environmentObject(AppRouter())
 }

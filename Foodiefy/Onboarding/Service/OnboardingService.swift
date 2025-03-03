@@ -40,7 +40,6 @@ struct OnboardingService {
             do {
                 let responseDict = try JSONDecoder().decode([String: String].self, from: data)
                 if let message = responseDict["message"] {
-                    print("📡 Respuesta del backend (Onboarding): \(responseDict)")
                     completion(.success(message))
                 } else {
                     completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Respuesta inválida"])))
@@ -66,7 +65,6 @@ extension OnboardingService {
 
         do {
             request.httpBody = try JSONEncoder().encode(data)
-            print("📡 Enviando request al backend:", String(data: request.httpBody!, encoding: .utf8) ?? "No se pudo convertir a JSON")
         } catch {
             completion(.failure(error))
             return
@@ -74,13 +72,11 @@ extension OnboardingService {
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("❌ Error en la request:", error.localizedDescription)
                 completion(.failure(error))
                 return
             }
 
             guard let data = data else {
-                print("❌ No se recibieron datos del backend")
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No se recibieron datos"])))
                 return
             }
@@ -88,14 +84,11 @@ extension OnboardingService {
             do {
                 let responseDict = try JSONDecoder().decode([String: String].self, from: data)
                 if let message = responseDict["message"] {
-                    print("✅ Respuesta del backend (Actualización Onboarding): \(responseDict)")
                     completion(.success(message))
                 } else {
-                    print("❌ Respuesta inválida del backend:", responseDict)
                     completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Respuesta inválida"])))
                 }
             } catch {
-                print("❌ Error al decodificar la respuesta:", error.localizedDescription)
                 completion(.failure(error))
             }
         }.resume()

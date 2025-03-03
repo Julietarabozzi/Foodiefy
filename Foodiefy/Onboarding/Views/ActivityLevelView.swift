@@ -1,63 +1,86 @@
-import Foundation
 import SwiftUI
 
 struct ActivityLevelView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
+    @EnvironmentObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var router: AppRouter
     @State private var selectedActivityLevel: String = ""
-    @EnvironmentObject var router: AppRouter // Agregamos el router
 
     let activityLevels = ["Principiante", "Intermedio", "Avanzado"]
 
     var body: some View {
         ZStack {
-            Color("greyBackground").edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 20) {
                 Spacer()
 
-                Text("¿Cuál es tu nivel de actividad física?")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color("darkGreenFoodiefy"))
+                ActivityHeaderView()
+                
+                Spacer()
+
+                ActivitySelectionView(activityLevels: activityLevels, selectedActivityLevel: $selectedActivityLevel)
 
                 Spacer()
 
-                VStack(spacing: 15) {
-                    ForEach(activityLevels, id: \ .self) { level in
-                        ActivityLevelOptionButton(
-                            label: level,
-                            isSelected: selectedActivityLevel == level,
-                            action: { selectedActivityLevel = level }
-                        )
-                    }
-                }
-                .padding(.horizontal, 40)
-
-                Spacer()
-
-                Button(action: {
-                    // Guardar el nivel de actividad en el ViewModel
-                    viewModel.activityLevel = selectedActivityLevel
-                    print("Nivel de actividad física seleccionado: \(viewModel.activityLevel)")
-                    router.navigate(to: .summary) // ✅ Navegar a la siguiente vista con el router
-                }) {
-                    Text("Siguiente")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(FoodiefyButtonStyle())
-                .padding(.horizontal, 40)
-                .disabled(selectedActivityLevel.isEmpty)
+                ActivityNextButtonView(viewModel: viewModel, selectedActivityLevel: selectedActivityLevel)
 
                 Spacer()
             }
         }
-        .modifier(NavigationBackModifier(color: Color("darkViolet")))
-        .navigationBarHidden(true)
+        .modifier(NavigationBackModifier(color: Color(.darkViolet)))
+        .navigationBarBackButtonHidden(true)
     }
 }
 
-// Componente reutilizable para las opciones de nivel de actividad física
-struct ActivityLevelOptionButton: View {
+private struct ActivityHeaderView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Text("¿Cuál es tu nivel de actividad física?")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(Color(.darkGreenFoodiefy))
+        }
+    }
+}
+
+private struct ActivitySelectionView: View {
+    let activityLevels: [String]
+    @Binding var selectedActivityLevel: String
+
+    var body: some View {
+        VStack(spacing: 15) {
+            ForEach(activityLevels, id: \.self) { level in
+                ActivityLevelOptionButton(
+                    label: level,
+                    isSelected: selectedActivityLevel == level,
+                    action: { selectedActivityLevel = level }
+                )
+            }
+        }
+        .padding(.horizontal, 40)
+    }
+}
+
+private struct ActivityNextButtonView: View {
+    @ObservedObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var router: AppRouter
+    var selectedActivityLevel: String
+
+    var body: some View {
+        Button(action: {
+            viewModel.activityLevel = selectedActivityLevel
+            router.navigate(to: .summary)
+        }) {
+            Text("Siguiente")
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(FoodiefyButtonStyle())
+        .padding(.horizontal, 40)
+        .disabled(selectedActivityLevel.isEmpty)
+        .opacity(selectedActivityLevel.isEmpty ? 0.5 : 1)
+    }
+}
+
+private struct ActivityLevelOptionButton: View {
     let label: String
     let isSelected: Bool
     let action: () -> Void
@@ -71,9 +94,8 @@ struct ActivityLevelOptionButton: View {
                 Spacer()
             }
             .padding()
-            .background(isSelected ? Color.blue : Color(.systemGray6))
+            .background(isSelected ? Color(.darkViolet) : Color(.systemGray6))
             .cornerRadius(8)
         }
     }
 }
-

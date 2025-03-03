@@ -27,14 +27,11 @@ struct MealPlanService {
         let mealPlan: String
     }
 
-    // 🔹 **Generar un nuevo plan alimenticio**
     func generateMealPlan(token: String, completion: @escaping (Result<MealPlanResponse, Error>) -> Void) {
         guard let url = URL(string: baseURL) else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "URL inválida"])))
             return
         }
-
-        print("🔑 Token enviado desde el frontend: \(token)")
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -52,30 +49,22 @@ struct MealPlanService {
                 return
             }
 
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("📡 Respuesta del backend (POST /api/meal-plan): \(jsonString)")
-            }
-
             do {
                 let postResponse = try JSONDecoder().decode(MealPlanPostResponse.self, from: data)
-
-                // 🔹 **Creamos un objeto `MealPlanResponse`**
                 let mealPlanResponse = MealPlanResponse(
                     id: UUID().uuidString,
-                    userId: "", // 🔹 El backend ya asocia el usuario, no necesitamos esto aquí
+                    userId: "",
                     mealPlan: postResponse.mealPlan,
                     createdAt: nil
                 )
 
                 completion(.success(mealPlanResponse))
             } catch {
-                print("❌ Error al decodificar respuesta: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }.resume()
     }
 
-    // 🔹 **Obtener los planes alimenticios del usuario**
     func fetchMealPlans(token: String, completion: @escaping (Result<[MealPlanResponse], Error>) -> Void) {
         guard let url = URL(string: baseURL) else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "URL inválida"])))
@@ -97,15 +86,10 @@ struct MealPlanService {
                 return
             }
 
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("📡 Respuesta del backend (GET /api/meal-plan): \(jsonString)")
-            }
-
             do {
                 let mealPlanWrapper = try JSONDecoder().decode(MealPlanWrapper.self, from: data)
                 completion(.success(mealPlanWrapper.mealPlans))
             } catch {
-                print("❌ Error al decodificar: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }.resume()
