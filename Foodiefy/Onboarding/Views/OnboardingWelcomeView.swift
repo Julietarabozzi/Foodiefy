@@ -8,48 +8,61 @@ struct OnboardingWelcomeView: View {
             VStack(spacing: 30) {
                 Spacer()
                 
-                // Título
-                Text("¡Bienvenido a Foodiefy!")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color("darkGreenFoodiefy"))
+                OnboardingHeaderView()
+
+                OnboardingImageView()
                 
-                // Subtítulo
-                Text("Diseña tu alimentación y alcanza tus metas. Estamos aquí para ayudarte a construir una vida más saludable.")
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-                
-                Spacer()
-                
-                // Imagen central
-                Image(.foodiefyIcon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 250, height: 250)
-                
-                Spacer()
-                
-                // Botón para comenzar
-                Button(action: {
-                    router.navigate(to: .onboardingForm)
-                }) {
-                    Text("Comenzar")
-                }
-                .buttonStyle(FoodiefyButtonStyle())
-                .padding(.horizontal, 40)
+                OnboardingButtonView()
                 
                 Spacer()
             }
             .padding(.vertical, 40)
         }
-        .modifier(NavigationBackModifier(color: Color("darkViolet"))) // Aquí aplicamos el modificador
-        .navigationBarHidden(true)
+        .modifier(NavigationBackModifier(color: Color("darkViolet")))
+        .navigationBarBackButtonHidden(true)
     }
 }
 
-// Preview
+private struct OnboardingHeaderView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Text("¡Bienvenido a Foodiefy!")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(Color(.darkGreenFoodiefy))
+
+            Text("Diseña tu alimentación y alcanza tus metas. Estamos aquí para ayudarte a construir una vida más saludable.")
+                .font(.system(size: 16, weight: .medium, design: .rounded))
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+        }
+    }
+}
+
+private struct OnboardingImageView: View {
+    var body: some View {
+        Image(.foodiefyIcon)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 250, height: 250)
+    }
+}
+
+private struct OnboardingButtonView: View {
+    @EnvironmentObject var router: AppRouter
+    
+    var body: some View {
+        Button(action: {
+            router.navigate(to: .onboardingForm)
+        }) {
+            Text("Comenzar")
+        }
+        .buttonStyle(FoodiefyButtonStyle())
+        .padding(.horizontal, 40)
+    }
+}
+
 struct OnboardingWelcomeView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingWelcomeView()
