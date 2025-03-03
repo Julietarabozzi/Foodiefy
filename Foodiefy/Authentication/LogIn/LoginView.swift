@@ -28,7 +28,7 @@ struct LoginView: View {
             Spacer()
         }
         .padding()
-        .modifier(NavigationBackModifier(color: Color("darkViolet")))
+        .modifier(NavigationBackModifier(color: Color(.darkViolet)))
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -39,7 +39,7 @@ private var header: some View {
         Text("Bienvenido de nuevo")
             .font(.largeTitle)
             .fontWeight(.bold)
-            .foregroundColor(Color("darkGreenFoodiefy"))
+            .foregroundColor(Color(.darkGreenFoodiefy))
 
         Image(.foodiefyIcon)
             .resizable()
@@ -75,8 +75,8 @@ private struct LoginButtonView: View {
             }
         }
         .buttonStyle(FoodiefyButtonStyle())
-        .disabled(!viewModel.isFormValid) // 🔹 Deshabilita si los datos no son válidos
-        .opacity(viewModel.isFormValid ? 1 : 0.5) // 🔹 Opacidad según validez del formulario
+        .disabled(!viewModel.isFormValid)
+        .opacity(viewModel.isFormValid ? 1 : 0.5) 
     }
 }
 

@@ -37,7 +37,7 @@ private var header: some View {
         Text("Crear cuenta")
             .font(.largeTitle)
             .fontWeight(.bold)
-            .foregroundColor(Color("darkGreenFoodiefy"))
+            .foregroundColor(Color(.darkGreenFoodiefy))
             .padding(.top)
         
         Text("Regístrate y comienza a alcanzar tus metas")
@@ -78,7 +78,7 @@ private struct PasswordValidationView: View {
                 passwordRuleView(for: viewModel.passwordCriteria[0])
                 Spacer()
                 passwordRuleView(for: viewModel.passwordCriteria[1])
-                    .padding(.leading, -20)
+                    .padding(.leading, -22)
                 Spacer()
             }
             HStack(spacing: 15) {

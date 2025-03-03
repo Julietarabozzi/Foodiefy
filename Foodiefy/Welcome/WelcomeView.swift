@@ -18,7 +18,6 @@ struct WelcomeView: View {
             WelcomeButtons
            
             }
-        .background(Color("lightGreenFoodiefy"))
         .edgesIgnoringSafeArea(.all)
     }
     
