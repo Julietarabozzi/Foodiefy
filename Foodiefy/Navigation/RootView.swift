@@ -20,7 +20,7 @@ struct RootView: View {
                     case .onboardingForm:
                         OnboardingFormView()
                     case .goalsForm:
-                        GoalsformView()
+                        GoalsFormView()
                     case .dietaryPreferences:
                         DietaryPreferencesView()
                     case .activityLevel:

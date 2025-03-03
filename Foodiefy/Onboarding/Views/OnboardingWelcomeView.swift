@@ -7,13 +7,11 @@ struct OnboardingWelcomeView: View {
         ZStack {
             VStack(spacing: 30) {
                 Spacer()
-                
                 OnboardingHeaderView()
-
+                Spacer()
                 OnboardingImageView()
-                
+                Spacer()
                 OnboardingButtonView()
-                
                 Spacer()
             }
             .padding(.vertical, 40)
@@ -60,12 +58,5 @@ private struct OnboardingButtonView: View {
         }
         .buttonStyle(FoodiefyButtonStyle())
         .padding(.horizontal, 40)
-    }
-}
-
-struct OnboardingWelcomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingWelcomeView()
-            .environmentObject(AppRouter())
     }
 }

@@ -9,7 +9,6 @@ struct OnboardingFormView: View {
 
     var body: some View {
         ZStack {
-            Color("greyBackground").edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 20) {
                 Spacer()
@@ -22,6 +21,8 @@ struct OnboardingFormView: View {
 
                 Spacer()
             }
+            .modifier(NavigationBackModifier(color: Color(.darkViolet)))
+            .navigationBarBackButtonHidden(true)
         }
     }
 }
@@ -78,10 +79,4 @@ private struct OnboardingNextButtonView: View {
         .disabled(!viewModel.isFormValid(age: age, weight: weight, height: height))
         .opacity(viewModel.isFormValid(age: age, weight: weight, height: height) ? 1 : 0.5)
     }
-}
-
-#Preview{
-    OnboardingFormView()
-        .environmentObject(OnboardingViewModel())
-        .environmentObject(AppRouter())
 }

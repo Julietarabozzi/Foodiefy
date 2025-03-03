@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct DietaryPreferencesView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel // ViewModel compartido
+    @EnvironmentObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var router: AppRouter
     @State private var selectedPreferences: [String] = []
-    @EnvironmentObject var router: AppRouter // Agregamos el router
 
     let preferences = [
         "Celíaco",
@@ -15,65 +15,89 @@ struct DietaryPreferencesView: View {
     
     var body: some View {
         ZStack {
-            Color("greyBackground").edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 20) {
                 Spacer()
 
-                Text("¿Tienes alguna preferencia o restricción alimenticia?")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color("darkGreenFoodiefy"))
-
+                DietaryHeaderView()
                 Spacer()
-
-                VStack(spacing: 15) {
-                    ForEach(preferences, id: \ .self) { preference in
-                        DietaryOptionButton(
-                            label: preference,
-                            isSelected: selectedPreferences.contains(preference),
-                            action: {
-                                if preference == "No tengo" {
-                                    selectedPreferences = ["No tengo"] // Si selecciona "No tengo", deselecciona todas las demás
-                                } else {
-                                    selectedPreferences.removeAll { $0 == "No tengo" }
-                                    if selectedPreferences.contains(preference) {
-                                        selectedPreferences.removeAll { $0 == preference }
-                                    } else {
-                                        selectedPreferences.append(preference)
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }
-                .padding(.horizontal, 40)
-
-                Spacer()
-
-                Button(action: {
-                    // Guardar las preferencias seleccionadas en el ViewModel
-                    viewModel.dietaryPreferences = selectedPreferences
-                    print("Preferencias seleccionadas: \(viewModel.dietaryPreferences)")
-                    router.navigate(to: .activityLevel) // ✅ Navegar a la siguiente vista con el router
-                }) {
-                    Text("Siguiente")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(FoodiefyButtonStyle())
-                .padding(.horizontal, 40)
-                .disabled(selectedPreferences.isEmpty)
                 
+                DietaryOptionsView(preferences: preferences, selectedPreferences: $selectedPreferences)
+
+                Spacer()
+
+                DietaryNextButtonView(viewModel: viewModel, selectedPreferences: selectedPreferences)
+
                 Spacer()
             }
         }
-        .modifier(NavigationBackModifier(color: Color("darkViolet")))
-        .navigationBarHidden(true)
+        .modifier(NavigationBackModifier(color: Color(.darkViolet)))
+        .navigationBarBackButtonHidden(true)
     }
 }
 
-// Componente reutilizable para las opciones de preferencias alimenticias
-struct DietaryOptionButton: View {
+private struct DietaryHeaderView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Text("¿Tienes alguna preferencia o restricción alimenticia?")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(Color(.darkGreenFoodiefy))
+        }
+        .padding()
+    }
+}
+
+private struct DietaryOptionsView: View {
+    let preferences: [String]
+    @Binding var selectedPreferences: [String]
+
+    var body: some View {
+        VStack(spacing: 15) {
+            ForEach(preferences, id: \.self) { preference in
+                DietaryOptionButton(
+                    label: preference,
+                    isSelected: selectedPreferences.contains(preference),
+                    action: {
+                        if preference == "No tengo" {
+                            selectedPreferences = ["No tengo"]
+                        } else {
+                            selectedPreferences.removeAll { $0 == "No tengo" }
+                            if selectedPreferences.contains(preference) {
+                                selectedPreferences.removeAll { $0 == preference }
+                            } else {
+                                selectedPreferences.append(preference)
+                            }
+                        }
+                    }
+                )
+            }
+        }
+        .padding(.horizontal, 40)
+    }
+}
+
+private struct DietaryNextButtonView: View {
+    @ObservedObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var router: AppRouter
+    var selectedPreferences: [String]
+
+    var body: some View {
+        Button(action: {
+            viewModel.dietaryPreferences = selectedPreferences
+            router.navigate(to: .activityLevel)
+        }) {
+            Text("Siguiente")
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(FoodiefyButtonStyle())
+        .padding(.horizontal, 40)
+        .disabled(selectedPreferences.isEmpty)
+        .opacity(selectedPreferences.isEmpty ? 0.5 : 1)
+    }
+}
+
+private struct DietaryOptionButton: View {
     let label: String
     let isSelected: Bool
     let action: () -> Void
@@ -87,8 +111,14 @@ struct DietaryOptionButton: View {
                 Spacer()
             }
             .padding()
-            .background(isSelected ? Color.blue : Color(.systemGray6))
+            .background(isSelected ? Color(.darkViolet) : Color(.systemGray6))
             .cornerRadius(8)
         }
     }
+}
+
+#Preview {
+    DietaryPreferencesView()
+        .environmentObject(OnboardingViewModel())
+        .environmentObject(AppRouter())
 }
