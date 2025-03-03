@@ -10,7 +10,7 @@ struct WelcomeView: View {
             Image(.foodiefyIcon)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 300, height: 300)
+                .frame(width: 250, height: 250)
                 .rotationEffect(.degrees(-15))
                 .offset(y: 50)
                 .padding(.bottom, 32)
