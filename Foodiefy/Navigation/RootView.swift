@@ -29,6 +29,8 @@ struct RootView: View {
                         SummaryView()
                     case .loading:
                         LoadingView()
+                    case .verification:
+                        VerificationCodeView()
                     }
                 }
         }

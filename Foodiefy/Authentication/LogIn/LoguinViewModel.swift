@@ -35,11 +35,12 @@ class LoginViewModel: ObservableObject {
                 self?.isLoading = false
                 switch result {
                 case .success(let response):
+                    print("✅ Respuesta del servidor: \(response)")
                     if let token = response.token, let user = response.user {
                         sessionManager.token = token
                         sessionManager.userId = user.id
                         sessionManager.name = user.name
-                        sessionManager.login(name: user.name, token: token, userId: user.id)
+                        sessionManager.login(name: user.name, email: user.email, token: token, userId: user.id)
 
                         completion(true)
                     } else {

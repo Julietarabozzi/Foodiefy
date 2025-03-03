@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUI
 
 class RegisterViewModel: ObservableObject {
     @Published var name: String = ""
@@ -45,12 +44,7 @@ class RegisterViewModel: ObservableObject {
             return
         }
         
-        guard isEmailValid else {
-            completion(false)
-            return
-        }
-        
-        guard isPasswordValid else {
+        guard isEmailValid, isPasswordValid else {
             completion(false)
             return
         }
@@ -63,11 +57,17 @@ class RegisterViewModel: ObservableObject {
                 switch result {
                 case .success(let response):
                     if let token = response.token, let userId = response.userId {
-                        sessionManager.token = token
-                        sessionManager.userId = userId
-                        sessionManager.login(name: self?.name ?? "Usuario", token: token, userId: userId)
-                        completion(true)
+                        sessionManager.login(name: self?.name ?? "Usuario", email: self?.email ?? "", token: token, userId: userId)
+                        self?.requestVerificationCode { success in
+                            if success {
+                                completion(true)
+                            } else {
+                                self?.errorMessage = "No se pudo enviar el código de verificación."
+                                completion(false)
+                            }
+                        }
                     } else {
+                        self?.errorMessage = "Error inesperado al registrar el usuario."
                         completion(false)
                     }
                 case .failure(let error):
@@ -77,8 +77,44 @@ class RegisterViewModel: ObservableObject {
             }
         }
     }
-}
+    private func requestVerificationCode(completion: @escaping (Bool) -> Void) {
+        guard !email.isEmpty else {
+            print("❌ Error: El email está vacío")
+            completion(false)
+            return
+        }
 
+        let url = URL(string: "https://foodiefy-backend-production.up.railway.app/api/auth/register/request-code")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let body: [String: Any] = ["email": email]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    completion(false)
+                    return
+                }
+
+                guard let data = data else {
+                    completion(false)
+                    return
+                }
+
+                if let jsonResponse = try? JSONDecoder().decode([String: String].self, from: data),
+                   jsonResponse["message"] == "Código enviado exitosamente" {
+                    print("✅ Código enviado correctamente")
+                    completion(true)
+                } else {
+                    completion(false)
+                }
+            }
+        }.resume()
+    }
+}
 struct PasswordRule {
     let text: String
     var isMet: Bool = false
