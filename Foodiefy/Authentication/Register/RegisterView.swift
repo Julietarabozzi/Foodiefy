@@ -19,7 +19,7 @@ struct RegisterView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
 
-            Image("image")
+            Image(.foodiefyIcon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 250, height: 250)

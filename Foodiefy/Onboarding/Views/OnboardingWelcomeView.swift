@@ -24,7 +24,7 @@ struct OnboardingWelcomeView: View {
                 Spacer()
                 
                 // Imagen central
-                Image("image")
+                Image(.foodiefyIcon)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 250, height: 250)

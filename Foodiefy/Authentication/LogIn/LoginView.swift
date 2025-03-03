@@ -13,7 +13,7 @@ struct LoginView: View {
                 .fontWeight(.bold)
                 .foregroundColor(Color("darkGreenFoodiefy"))
 
-            Image("image")
+            Image(.foodiefyIcon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 300, height: 300)
