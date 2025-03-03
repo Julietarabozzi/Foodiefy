@@ -50,3 +50,14 @@ class OnboardingViewModel: ObservableObject {
         }
     }
 }
+extension OnboardingViewModel {
+    func isFormValid(age: String, weight: String, height: String) -> Bool {
+        guard let ageInt = Int(age), let weightDouble = Double(weight), let heightDouble = Double(height) else {
+            return false
+        }
+        
+        return (18...100).contains(ageInt) &&
+               (35...180).contains(weightDouble) &&
+               (100...200).contains(heightDouble)
+    }
+}
