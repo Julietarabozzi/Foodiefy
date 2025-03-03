@@ -1,20 +1,13 @@
-//
-//  ScanView.swift
-//  Foodiefy
-//
-//  Created by Julieta Rabozzi on 23/11/2024.
-//
-
-import Foundation
 import SwiftUI
 
 struct ScanView: View {
+    @ObservedObject var viewModel: FoodScannerViewModel
+
     var body: some View {
         ZStack {
-            // Fondo
             Color("greyBackground")
                 .edgesIgnoringSafeArea(.all)
-            
+
             VStack(spacing: 40) {
                 Spacer()
 
@@ -24,18 +17,13 @@ struct ScanView: View {
                     .scaledToFit()
                     .frame(width: 150, height: 150)
                     .foregroundColor(.blue)
-                
-                // Texto para indicar acción
+
                 Text("Presiona para escanear")
                     .font(.title)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
 
-                // Botón para escanear
-                Button(action: {
-                    print("Escanear iniciado")
-                    // Aquí puedes agregar la lógica del escaneo
-                }) {
+                NavigationLink(destination: ARScannerView(viewModel: viewModel)) {
                     Text("Escanear")
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.white)
@@ -45,7 +33,29 @@ struct ScanView: View {
                         .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
                         .padding(.horizontal, 40)
                 }
-                
+
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+
+                if let nutrients = viewModel.nutrients {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("🍏 \(viewModel.foodName)").font(.headline)
+                        Text("🔥 Calorías: \(nutrients.ENERC_KCAL ?? 0) kcal")
+                        Text("💪 Proteínas: \(nutrients.PROCNT ?? 0) g")
+                        Text("🥑 Grasas: \(nutrients.FAT ?? 0) g")
+                        Text("🍞 Carbohidratos: \(nutrients.CHOCDF ?? 0) g")
+                    }
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                }
+
+                if let errorMessage = viewModel.errorMessage {
+                    Text("⚠️ \(errorMessage)").foregroundColor(.red)
+                }
+
                 Spacer()
             }
         }

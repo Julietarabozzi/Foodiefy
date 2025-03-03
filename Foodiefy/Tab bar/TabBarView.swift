@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TabBarView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
+    @StateObject private var foodScannerViewModel = FoodScannerViewModel()
 
     var body: some View {
         TabView {
@@ -19,7 +20,7 @@ struct TabBarView: View {
                     Text("Home")
                 }
             
-            ScanView()
+            ScanView(viewModel: foodScannerViewModel)
                 .tabItem {
                     Image(systemName: "camera.fill")
                     Text("Escaneo")
