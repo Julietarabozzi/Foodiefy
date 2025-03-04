@@ -3,6 +3,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var sessionManager: UserSessionManager
     @EnvironmentObject var router: AppRouter
+    @StateObject private var loginViewModel = LoginViewModel()
 
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -11,6 +12,7 @@ struct RootView: View {
                     switch route {
                     case .login:
                         LoginView()
+                            .environmentObject(loginViewModel)
                     case .register:
                         RegisterView()
                     case .onboarding:
@@ -29,8 +31,11 @@ struct RootView: View {
                         SummaryView()
                     case .loading:
                         LoadingView()
-                    case .verification:
-                        VerificationCodeView()
+                    case .verificationRegister:
+                        VerificationRegisterCodeView()
+                    case .verificationLoginCode(let email):
+                        VerificationLoginCodeView(email: email)
+                            .environmentObject(loginViewModel) 
                     }
                 }
         }

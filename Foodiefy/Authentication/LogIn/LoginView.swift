@@ -66,17 +66,17 @@ private struct LoginButtonView: View {
 
     var body: some View {
         Button("Iniciar sesión") {
-            viewModel.login(sessionManager: sessionManager) { success in
+            viewModel.requestLoginCode { success in
                 if success {
                     DispatchQueue.main.async {
-                        router.navigate(to: .home)
+                        router.navigate(to: .verificationLoginCode(email: viewModel.email))
                     }
                 }
             }
         }
         .buttonStyle(FoodiefyButtonStyle())
         .disabled(!viewModel.isFormValid)
-        .opacity(viewModel.isFormValid ? 1 : 0.5) 
+        .opacity(viewModel.isFormValid ? 1 : 0.5)
     }
 }
 
@@ -90,3 +90,4 @@ private struct ErrorMessageView: View {
             .padding(.top, 5)
     }
 }
+

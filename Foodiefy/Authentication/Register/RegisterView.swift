@@ -112,7 +112,7 @@ private struct RegisterButtonView: View {
             viewModel.register(sessionManager: sessionManager) { success in
                 if success {
                     DispatchQueue.main.async {
-                        router.navigate(to: .verification) 
+                        router.navigate(to: .verificationRegister) 
                     }
                 }
             }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct VerificationCodeView: View {
+struct VerificationRegisterCodeView: View {
     @State private var verificationCode: String = ""
     @EnvironmentObject var router: AppRouter
     @EnvironmentObject var sessionManager: UserSessionManager
