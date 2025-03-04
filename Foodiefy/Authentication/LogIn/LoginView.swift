@@ -69,7 +69,7 @@ private struct LoginButtonView: View {
             viewModel.login(sessionManager: sessionManager) { success in
                 if success {
                     DispatchQueue.main.async {
-                        router.navigate(to: .home)
+                        router.navigate(to: .verification(isLogin: true)) 
                     }
                 }
             }

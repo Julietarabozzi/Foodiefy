@@ -8,6 +8,7 @@ struct LoginService {
     struct LoginResponse: Codable {
         let token: String?
         let user: UserResponse?
+        let message: String?
     }
 
     struct UserResponse: Codable {
@@ -42,12 +43,7 @@ struct LoginService {
 
             do {
                 let decodedResponse = try JSONDecoder().decode(LoginResponse.self, from: data)
-                if let token = decodedResponse.token, let user = decodedResponse.user {
-                    completion(.success(decodedResponse))
-                } else {
-                    let errorMessage = try JSONDecoder().decode([String: String].self, from: data)["message"] ?? "Error en el servidor"
-                    completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: errorMessage])))
-                }
+                completion(.success(decodedResponse))
             } catch {
                 let errorMessage = (try? JSONDecoder().decode([String: String].self, from: data))?["message"] ?? "Error desconocido"
                 completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: errorMessage])))

@@ -43,5 +43,5 @@ enum Route: Hashable {
     case activityLevel
     case summary
     case loading
-    case verification
+    case verification(isLogin: Bool)
 }

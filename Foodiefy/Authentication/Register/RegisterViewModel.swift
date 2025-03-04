@@ -38,7 +38,7 @@ class RegisterViewModel: ObservableObject {
         return !name.isEmpty && isEmailValid && isPasswordValid
     }
     
-    func register(sessionManager: UserSessionManager, completion: @escaping (Bool) -> Void) {
+    func register(sessionManager: UserSessionManager, router: AppRouter, completion: @escaping (Bool) -> Void) {
         guard !name.isEmpty, !email.isEmpty, !password.isEmpty else {
             completion(false)
             return
@@ -56,19 +56,18 @@ class RegisterViewModel: ObservableObject {
                 self?.isLoading = false
                 switch result {
                 case .success(let response):
-                    if let token = response.token, let userId = response.userId {
-                        sessionManager.login(name: self?.name ?? "Usuario", email: self?.email ?? "", token: token, userId: userId)
-                        self?.requestVerificationCode { success in
-                            if success {
-                                completion(true)
-                            } else {
-                                self?.errorMessage = "No se pudo enviar el código de verificación."
-                                completion(false)
-                            }
+                    print("✅ Usuario registrado con éxito")
+
+                    sessionManager.userEmail = self?.email ?? ""
+                    sessionManager.name = self?.name ?? "Usuario"
+                    
+                    self?.requestVerificationCode { success in
+                        if success {
+                            completion(true)
+                        } else {
+                            self?.errorMessage = "No se pudo enviar el código de verificación."
+                            completion(false)
                         }
-                    } else {
-                        self?.errorMessage = "Error inesperado al registrar el usuario."
-                        completion(false)
                     }
                 case .failure(let error):
                     self?.errorMessage = error.localizedDescription

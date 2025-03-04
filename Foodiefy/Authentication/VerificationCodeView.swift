@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct VerificationCodeView: View {
+    var isLogin: Bool
+    
     @State private var verificationCode: String = ""
     @EnvironmentObject var router: AppRouter
     @EnvironmentObject var sessionManager: UserSessionManager
@@ -10,7 +12,7 @@ struct VerificationCodeView: View {
         VStack(spacing: 20) {
             Spacer()
             
-            Text("Verificación de Cuenta")
+            Text(isLogin ? "Verificación de Inicio de Sesión" : "Verificación de Cuenta")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(Color("darkGreenFoodiefy"))
@@ -54,16 +56,12 @@ struct VerificationCodeView: View {
             return
         }
         
-        let url = URL(string: "https://foodiefy-backend-production.up.railway.app/api/auth/register/verify-code")!
+        let url = URL(string: "https://foodiefy-backend-production.up.railway.app/api/auth/login/verify-code")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let body: [String: Any] = [
-            "email": userEmail,
-            "code": verificationCode
-        ]
-        
+        let body: [String: Any] = ["email": userEmail, "code": verificationCode]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
         
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -80,8 +78,12 @@ struct VerificationCodeView: View {
                 }
                 
                 if let jsonResponse = try? JSONDecoder().decode([String: String].self, from: data),
-                   jsonResponse["message"] == "Código verificado correctamente" {
-                    router.navigate(to: .onboarding)
+                   let token = jsonResponse["token"] {
+                    
+                    sessionManager.token = token
+                    sessionManager.isLoggedIn = true
+                    
+                    router.navigate(to: .home)
                 } else {
                     self.errorMessage = "Código incorrecto. Inténtalo nuevamente."
                 }

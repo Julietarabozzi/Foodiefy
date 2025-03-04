@@ -43,7 +43,13 @@ class LoginViewModel: ObservableObject {
                         sessionManager.login(name: user.name, email: user.email, token: token, userId: user.id)
 
                         completion(true)
+                    } else if response.message == "Código de verificación enviado" {
+                        sessionManager.userEmail = self?.email ?? ""
+                        sessionManager.name = self?.email.components(separatedBy: "@").first ?? "Usuario"
+                        sessionManager.userId = "temp"
+                        completion(true)
                     } else {
+                        self?.errorMessage = "Error desconocido en login."
                         completion(false)
                     }
                 case .failure(let error):

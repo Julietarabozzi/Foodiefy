@@ -109,10 +109,10 @@ private struct RegisterButtonView: View {
     
     var body: some View {
         Button("Registrarse") {
-            viewModel.register(sessionManager: sessionManager) { success in
+            viewModel.register(sessionManager: sessionManager, router: router) { success in
                 if success {
                     DispatchQueue.main.async {
-                        router.navigate(to: .verification) 
+                        router.navigate(to: .verification(isLogin: false))
                     }
                 }
             }
