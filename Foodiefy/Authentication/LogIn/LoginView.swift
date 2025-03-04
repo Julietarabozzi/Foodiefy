@@ -65,18 +65,25 @@ private struct LoginButtonView: View {
     @EnvironmentObject var sessionManager: UserSessionManager
 
     var body: some View {
-        Button("Iniciar sesión") {
-            viewModel.requestLoginCode { success in
-                if success {
-                    DispatchQueue.main.async {
-                        router.navigate(to: .verificationLoginCode(email: viewModel.email))
+        VStack(spacing: 10) { // 🔹 Agregamos un VStack para organizar los elementos
+            Button("Iniciar sesión") {
+                viewModel.requestLoginCode { success in
+                    if success {
+                        DispatchQueue.main.async {
+                            router.navigate(to: .verificationLoginCode(email: viewModel.email))
+                        }
                     }
                 }
             }
+            .buttonStyle(FoodiefyButtonStyle())
+            .disabled(!viewModel.isFormValid)
+            .opacity(viewModel.isFormValid ? 1 : 0.5)
+            
+            NavigationLink("¿Olvidaste tu contraseña?", destination: PasswordRecoveryView())
+                .font(.footnote)
+                .foregroundColor(.blue)
+                .padding(.top, 5)
         }
-        .buttonStyle(FoodiefyButtonStyle())
-        .disabled(!viewModel.isFormValid)
-        .opacity(viewModel.isFormValid ? 1 : 0.5)
     }
 }
 
