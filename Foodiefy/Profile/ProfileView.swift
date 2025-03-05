@@ -6,6 +6,7 @@ struct ProfileView: View {
     @EnvironmentObject var progressViewModel: ProgressViewModel
     @StateObject private var profileViewModel = ProfileViewModel()
     @State private var isEditing = false
+    @State private var showModal = false  // ✅ Estado para controlar el modal
 
     var body: some View {
         NavigationView {
@@ -105,6 +106,7 @@ struct ProfileView: View {
                         profileViewModel.updateProfile(sessionManager: sessionManager) { success in
                             if success {
                                 isEditing.toggle()
+                                showModal = true
                             } else {
                                 print("❌ Falló la actualización del perfil")
                             }
@@ -122,6 +124,13 @@ struct ProfileView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
+                .alert(isPresented: $showModal) {
+                    Alert(
+                        title: Text("¡Plan Actualizado!"),
+                        message: Text("Tu nuevo plan ya está disponible en Home."),
+                        dismissButton: .default(Text("Entendido"))
+                    )
+                }
             }
             .navigationBarHidden(true)
         }

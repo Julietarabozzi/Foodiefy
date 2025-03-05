@@ -28,7 +28,23 @@ struct HomeView: View {
                             .foregroundColor(.secondary)
                     }
                     .padding(.top, 20)
-                    
+
+                    // ✅ Cartel informativo con el logo
+                    HStack(spacing: 15) {
+                        Image("FoodiefyIcon") // 👈 Asegúrate de que esta imagen esté en tus assets
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+
+                        Text("Se recomienda que luego de una semana actualices tus avances en \"Mi Perfil\" para crear un nuevo plan.")
+                            .font(.system(size: 14))
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.white).shadow(radius: 2))
+                    .padding(.horizontal, 20)
+
                     if mealPlanViewModel.mealPlans.isEmpty {
                         Text("No hay planes generados todavía.")
                             .font(.headline)
